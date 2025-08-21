@@ -1,0 +1,60 @@
+import mongoose from "mongoose";
+
+const playerSchema = new mongoose.Schema({
+  discordId: { type: String, required: true, unique: true },
+  username: String,
+  xp: { type: Number, default: 0 },
+  energy: { type: Number, default: 100 },
+  mythos: { type: String, required: true },
+  type: {
+    type: String,
+    enum: [
+      "Geist",
+      "Macht",
+      "Schatten",
+      "Glanz",
+      "Wildnis",
+      "Glaube",
+      "Mysterium",
+      "Ordnung",
+      "Innovation",
+      "Rebellion",
+    ],
+    default: "Geist",
+  },
+  intelligence: {
+    type: Number,
+    default: 0,
+  },
+  charisma: {
+    type: Number,
+    default: 0,
+  },
+  strength: {
+    type: Number,
+    default: 0,
+  },
+  dexterity: {
+    type: Number,
+    default: 0,
+  },
+  perception: {
+    type: Number,
+    default: 0,
+  },
+  items: [
+    {
+      name: {
+        type: String,
+        required: true,
+      },
+      quantity: {
+        type: Number,
+        required: true,
+      },
+    },
+  ],
+  lastDailyReset: Date,
+});
+
+export default mongoose.model("Player", playerSchema);
