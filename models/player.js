@@ -3,7 +3,9 @@ import mongoose from "mongoose";
 const playerSchema = new mongoose.Schema({
   discordId: { type: String, required: true, unique: true },
   username: String,
+  level: { type: Number, default: 1 },
   xp: { type: Number, default: 0 },
+  money: { type: Number, default: 0 },
   energy: { type: Number, default: 100 },
   mythos: { type: String, required: true },
   type: {

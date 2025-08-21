@@ -4,8 +4,6 @@ import {
   ButtonBuilder,
   ButtonStyle,
 } from "discord.js";
-import Player from "../models/player.js";
-import Mission from "../models/mission.js";
 import { mythTypes } from "../commands/profile.js";
 import fs from "fs";
 import path from "path";

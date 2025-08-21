@@ -19,7 +19,7 @@ export const execute = async (interaction) => {
 
   const missionDescriptions = missionList.map(
     (m) =>
-      `**${m.title}**: ${m.description} (Dauer: ${m.duration} Minuten, ${m.difficulty})`
+      `**${m.title}**: ${m.description} (Dauer: ${m.duration} Minuten, Level: ${m.level})`
   );
 
   const rows = [];
