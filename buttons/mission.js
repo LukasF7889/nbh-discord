@@ -1,8 +1,17 @@
 import Mission from "../models/mission.js";
+import { toMissionClass } from "../models/mission.js";
+import MissionClass from "../classes/entities/MissionClass.js";
 import Player from "../models/player.js";
 import checkMissionSuccess from "../utils/checkMissionSuccess.js";
 import callEvents from "../utils/callEvents.js";
-import { EmbedBuilder } from "discord.js";
+import { EmbedBuilder, Events } from "discord.js";
+import addItemToInventory from "../utils/addItemToInventory.js";
+import getItem from "../utils/getItem.js";
+
+import MissionService from "../classes/services/MissionService.js";
+import PlayerRepository from "../classes/repositories/PlayerRepository.js";
+import MissionRepository from "../classes/repositories/MissionRepository.js";
+import EventService from "../classes/services/EventService.js";
 
 const handleStartMission = async (interaction, args) => {
   const [missionId] = args;
@@ -10,13 +19,12 @@ const handleStartMission = async (interaction, args) => {
   let mission;
   let playerId;
   let player;
-  let modPlayer;
 
   try {
-    mission = await Mission.findById(missionId);
+    const missionDoc = await MissionRepository.findById(missionId);
+    mission = toMissionClass(missionDoc);
     playerId = interaction.user.id;
-    player = await Player.findOne({ discordId: playerId });
-    modPlayer = player;
+    player = await PlayerRepository.findOne(playerId);
     console.log(mission);
   } catch (error) {
     console.error(error);
@@ -29,24 +37,16 @@ const handleStartMission = async (interaction, args) => {
       ephemeral: true,
     });
 
-  //Mission start
-  if (mission.cost > player.energy) {
-    return interaction.reply({
-      content: `Nicht genug Energie, um diese Mission zu starten`,
-      ephemeral: true,
-    });
-  } else {
-    modPlayer.energy -= mission.cost;
-  }
-
-  await interaction.reply({
-    content: `Du hast die Mission ${mission.title} gestartet!`,
-    ephemeral: true,
-  });
+  const events = await EventService.getRandomEvents(mission.duration);
+  const missionResult = await MissionService.startMission(
+    player,
+    mission,
+    events,
+    getItem
+  );
 
   //Check mission success
   const feedback = checkMissionSuccess(player, mission);
-  console.log(feedback);
 
   //Mission end
   if (feedback.success) {
@@ -56,20 +56,24 @@ const handleStartMission = async (interaction, args) => {
     const eventFeedback = await callEvents(player, mission);
     const eventReport = [];
 
-    eventFeedback.map((e, i) => {
+    for (let i = 0; i < eventFeedback.length; i++) {
+      const e = eventFeedback[i];
+      if (e.item && e.item.quantity) await addItemToInventory(player, e.item);
       eventReport.push(
         `**Event ${i + 1}:** ${e.description}\n` +
           `> 🎯 ${e.type}: \`${e.playerValue} + ${e.dice} = ${e.total}/${
             e.difficulty
-          }\` ➝ ${e.isSuccess ? "✅ Erfolg" : "❌ Fehlschlag"}`
+          }\` ➝ ${e.isSuccess ? "✅ Erfolg" : "❌ Fehlschlag"} ${
+            e.item ? `Item erhalten: ${e.item.name} x${e.item.quantity}` : ""
+          }`
       );
-    });
+    }
 
-    const newPlayer = await Player.findOneAndUpdate(
-      { discordId: playerId },
-      { $set: { xp: modPlayer.xp, energy: modPlayer.energy } },
-      { new: true }
-    );
+    //Update player
+    player.xp = modPlayer.xp;
+    player.energy = modPlayer.energy;
+    const newPlayer = await player.save();
+
     await interaction.followUp({
       embeds: [
         new EmbedBuilder()
@@ -103,7 +107,11 @@ const handleStartMission = async (interaction, args) => {
   } else if (!feedback.success) {
     const newPlayer = await Player.findOneAndUpdate(
       { discordId: playerId },
-      { $set: { energy: modPlayer.energy } },
+      {
+        $set: {
+          energy: modPlayer.energy,
+        },
+      },
       { new: true }
     );
     await interaction.followUp({

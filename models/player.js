@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Player from "../classes/entities/PlayerClass.js";
 
 const playerSchema = new mongoose.Schema({
   discordId: { type: String, required: true, unique: true },
@@ -6,7 +7,10 @@ const playerSchema = new mongoose.Schema({
   level: { type: Number, default: 1 },
   xp: { type: Number, default: 0 },
   money: { type: Number, default: 0 },
-  energy: { type: Number, default: 100 },
+  energy: {
+    max: { type: Number, required: true },
+    current: { type: Number, required: true, default: 0 },
+  },
   mythos: { type: String, required: true },
   type: {
     type: String,
@@ -24,25 +28,27 @@ const playerSchema = new mongoose.Schema({
     ],
     default: "Geist",
   },
-  intelligence: {
-    type: Number,
-    default: 0,
-  },
-  charisma: {
-    type: Number,
-    default: 0,
-  },
-  strength: {
-    type: Number,
-    default: 0,
-  },
-  dexterity: {
-    type: Number,
-    default: 0,
-  },
-  perception: {
-    type: Number,
-    default: 0,
+  skills: {
+    intelligence: {
+      type: Number,
+      default: 0,
+    },
+    charisma: {
+      type: Number,
+      default: 0,
+    },
+    strength: {
+      type: Number,
+      default: 0,
+    },
+    dexterity: {
+      type: Number,
+      default: 0,
+    },
+    perception: {
+      type: Number,
+      default: 0,
+    },
   },
   items: [
     {
@@ -60,3 +66,9 @@ const playerSchema = new mongoose.Schema({
 });
 
 export default mongoose.model("Player", playerSchema);
+
+// Converting mongoose document into a oop class
+export function toPlayerClass(mongooseMissionDoc) {
+  // .toObject() removes mongoose specific fields
+  return new Player(mongooseMissionDoc.toObject());
+}

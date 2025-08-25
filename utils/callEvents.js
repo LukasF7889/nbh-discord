@@ -1,4 +1,5 @@
 import MissionEvents from "../models/missionEvents.js";
+import getItem from "./getItem.js";
 
 const rollD20 = () => {
   const dieRoll = Math.floor(Math.max(1, Math.random() * 20));
@@ -16,7 +17,16 @@ const callEvents = async (player, mission) => {
 
   for (const event of events) {
     const dice = rollD20();
+    let item = null;
+
     const isSuccess = dice + player[event.type] >= event.difficulty;
+
+    if (isSuccess) {
+      //Get an item
+      console.log(event.type);
+      item = await getItem(event.type);
+      console.log(item);
+    }
 
     feedback.push({
       description: event.description,
@@ -26,9 +36,10 @@ const callEvents = async (player, mission) => {
       dice,
       total: dice + player[event.type],
       isSuccess,
+      item,
     });
   }
-
+  console.log(feedback);
   return feedback;
 };
 

@@ -1,0 +1,85 @@
+class Mission {
+  constructor({
+    title,
+    duration,
+    description,
+    difficulty,
+    challenge,
+    message,
+    cost,
+    xp,
+  }) {
+    this.title = title;
+    this.duration = duration;
+    this.description = description;
+    this.difficulty = difficulty;
+    this.challenge = challenge;
+    this.message = message;
+    this.cost = cost;
+    this.xp = xp;
+  }
+
+  rollD20() {
+    return Math.floor(Math.random() * 20) + 1;
+  }
+
+  async callEvents(player, events, getItemFn) {
+    let feedback = [];
+
+    for (const event of events) {
+      const dice = this.rollD20();
+      let item = null;
+
+      const isSuccess = dice + player.skills?.[event.type] >= event.difficulty;
+
+      if (isSuccess) {
+        //Get an item
+        item = await getItemFn(event.type);
+      }
+
+      feedback.push({
+        description: event.description,
+        type: event.type,
+        difficulty: event.difficulty,
+        playerValue: player.skills[event.type],
+        dice,
+        total: dice + player.skills[event.type],
+        isSuccess,
+        item,
+      });
+    }
+    console.log(feedback);
+    return feedback;
+  }
+
+  checkSuccess(player) {
+    if (!player || !this) return;
+    const { challenge } = this;
+    const feedback = { success: false, message: "" };
+    const check = [
+      "intelligence",
+      "charisma",
+      "strength",
+      "dexterity",
+      "perception",
+    ];
+
+    for (const att of this.challenge) {
+      console.log(
+        `Check ${att}: Player: ${player.skills[att]} | Challenge: ${challenge[att]}`
+      );
+      if (player.skills[att] < challenge[att]) {
+        return {
+          success: false,
+          message: `${
+            this.message[att] ?? "Check failed"
+          } - ${att} check failed`,
+        };
+      }
+    }
+
+    return { success: true, message: this.message.success };
+  }
+}
+
+export default Mission;

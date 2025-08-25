@@ -9,84 +9,113 @@ import Player from "../models/player.js";
 
 export const mythTypes = {
   Geist: {
-    energy: 100,
-    charisma: 10,
-    strength: 5,
-    intelligence: 10,
-    dexterity: 5,
-    perception: 10,
+    energy: { max: 100, current: 100 },
+    skills: {
+      charisma: 6,
+      strength: 3,
+      intelligence: 6,
+      dexterity: 4,
+      perception: 6,
+    },
   },
+
   Macht: {
-    energy: 120,
-    charisma: 5,
-    strength: 15,
-    intelligence: 5,
-    dexterity: 10,
-    perception: 5,
+    energy: { max: 100, current: 100 },
+    skills: {
+      charisma: 3,
+      strength: 7,
+      intelligence: 3,
+      dexterity: 6,
+      perception: 6,
+    },
   },
+
   Schatten: {
-    energy: 80,
-    charisma: 5,
-    strength: 10,
-    intelligence: 10,
-    dexterity: 15,
-    perception: 10,
+    energy: { max: 100, current: 100 },
+    skills: {
+      charisma: 3,
+      strength: 5,
+      intelligence: 4,
+      dexterity: 7,
+      perception: 6,
+    },
   },
+
   Glanz: {
-    energy: 90,
-    charisma: 15,
-    strength: 5,
-    intelligence: 10,
-    dexterity: 5,
-    perception: 10,
+    energy: { max: 100, current: 100 },
+    skills: {
+      charisma: 7,
+      strength: 3,
+      intelligence: 5,
+      dexterity: 4,
+      perception: 6,
+    },
   },
+
   Wildnis: {
-    energy: 100,
-    charisma: 5,
-    strength: 10,
-    intelligence: 5,
-    dexterity: 15,
-    perception: 10,
+    energy: { max: 100, current: 100 },
+    skills: {
+      charisma: 3,
+      strength: 6,
+      intelligence: 3,
+      dexterity: 7,
+      perception: 6,
+    },
   },
+
   Glaube: {
-    energy: 100,
-    charisma: 15,
-    strength: 5,
-    intelligence: 10,
-    dexterity: 5,
-    perception: 5,
+    energy: { max: 100, current: 100 },
+    skills: {
+      charisma: 7,
+      strength: 3,
+      intelligence: 5,
+      dexterity: 4,
+      perception: 6,
+    },
   },
+
   Mysterium: {
-    energy: 80,
-    charisma: 10,
-    strength: 5,
-    intelligence: 15,
-    dexterity: 10,
-    perception: 10,
+    energy: { max: 100, current: 100 },
+    skills: {
+      charisma: 4,
+      strength: 3,
+      intelligence: 7,
+      dexterity: 5,
+      perception: 6,
+    },
   },
+
   Ordnung: {
-    energy: 100,
-    charisma: 10,
-    strength: 10,
-    intelligence: 10,
-    dexterity: 5,
-    perception: 5,
+    energy: { max: 100, current: 100 },
+    skills: {
+      charisma: 4,
+      strength: 5,
+      intelligence: 5,
+      dexterity: 3,
+      perception: 8,
+    },
   },
+
   Innovation: {
-    energy: 90,
-    charisma: 10,
-    strength: 5,
-    intelligence: 15,
-    dexterity: 10,
-    perception: 10,
+    energy: { max: 100, current: 100 },
+    skills: {
+      charisma: 4,
+      strength: 3,
+      intelligence: 7,
+      dexterity: 5,
+      perception: 6,
+    },
   },
+
   Rebellion: {
-    energy: 110,
-    charisma: 5,
-    strength: 10,
-    intelligence: 5,
-    dexterity: 15,
-    perception: 10,
+    energy: { max: 100, current: 100 },
+    skills: {
+      charisma: 3,
+      strength: 6,
+      intelligence: 3,
+      dexterity: 7,
+      perception: 6,
+    },
   },
 };
 
@@ -121,12 +150,12 @@ export async function execute(interaction) {
   // Profil anzeigen
   await interaction.reply(`🧙 Profil von ${player.username}:
 • XP: ${player.xp}
-• Energie: ${player.energy}
-• Charisma: ${player.charisma}
-• Strength: ${player.strength}
-• Intelligence: ${player.intelligence}
-• Dexterity: ${player.dexterity}
-• Perception: ${player.perception}
+• Energie: ${player.energy.max}
+• Charisma: ${player.skills.charisma}
+• Strength: ${player.skills.strength}
+• Intelligence: ${player.skills.intelligence}
+• Dexterity: ${player.skills.dexterity}
+• Perception: ${player.skills.perception}
 • Items: ${player.items.map((i) => i.name).join(", ") || "Keine"}
 • Mythos-Typ: ${player.type}`);
 }

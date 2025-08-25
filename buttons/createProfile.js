@@ -9,6 +9,7 @@ const handleCreateProfile = async (interaction, args) => {
   await Player.create({
     id: userId,
     discordId: discordId,
+    level: 1,
     username: interaction.user.username,
     mythos: mythosName,
     type: mythosType,
