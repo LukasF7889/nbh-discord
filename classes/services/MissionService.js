@@ -18,7 +18,6 @@ class MissionService {
     player.energy -= mission.cost;
 
     const missionFeedback = mission.checkSuccess(player);
-    let eventReport = [];
 
     if (missionFeedback.success) {
       player.xp += mission.xp;
@@ -28,12 +27,11 @@ class MissionService {
 
     for (const e of eventFeedback) {
       if (e.item && e.item.quantity) await player.addItemToInventory(e.item);
-      eventReport.push(e);
     }
 
     await PlayerRepository.save(player);
 
-    return { missionFeedback, eventReport, player };
+    return { missionFeedback, eventFeedback, player };
   }
 }
 
