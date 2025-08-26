@@ -1,8 +1,5 @@
 import mongoose from "mongoose";
-
-// Importiere die OOP-Klasse
 import Mission from "../classes/entities/MissionClass.js";
-import MissionRepository from "../classes/repositories/MissionRepository.js";
 
 export const missionSchema = new mongoose.Schema({
   title: String,

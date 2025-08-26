@@ -1,4 +1,4 @@
-import MissionEvents from "../../models/missionEvents";
+import MissionEvents from "../../models/missionEvents.js";
 
 class EventService {
   static async getRandomEvents(missionDuration) {

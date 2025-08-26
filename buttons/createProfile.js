@@ -1,5 +1,5 @@
 import PlayerRepository from "../classes/repositories/PlayerRepository.js";
-import Player from "../classes/entities/PlayerClass.js"; // Importiere die Player-Klasse
+import PlayerClass from "../classes/entities/PlayerClass.js"; // Importiere die Player-Klasse
 import { mythTypes } from "../commands/profile.js";
 
 const handleCreateProfile = async (interaction, args) => {
@@ -8,7 +8,7 @@ const handleCreateProfile = async (interaction, args) => {
   const discordId = interaction.user.id;
 
   // Create a player object
-  const playerObj = new Player({
+  const playerObj = new PlayerClass({
     id: userId,
     discordId: discordId,
     level: 1,

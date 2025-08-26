@@ -1,6 +1,6 @@
-import { toMissionClass } from "../../models/mission";
-import MissionRepository from "../repositories/MissionRepository";
-import PlayerRepository from "../PlayerRepository";
+import { toMissionClass } from "../../models/mission.js";
+import MissionRepository from "../repositories/MissionRepository.js";
+import PlayerRepository from "../repositories/PlayerRepository.js";
 
 class MissionService {
   static async loadMission(missionId) {

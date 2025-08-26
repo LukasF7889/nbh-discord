@@ -1,4 +1,4 @@
-class Player {
+class PlayerClass {
   constructor({
     discordId,
     username,
@@ -66,4 +66,4 @@ class Player {
   }
 }
 
-export default Player;
+export default PlayerClass;

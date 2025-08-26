@@ -1,11 +1,6 @@
-import {
-  SlashCommandBuilder,
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-} from "discord.js";
-import BlackboardService from "../classes/services/BlackboardService";
-import MissionPresenter from "../classes/presenter/MissionPresenter";
+import { SlashCommandBuilder } from "discord.js";
+import BlackboardService from "../classes/services/BlackboardService.js";
+import MissionPresenter from "../classes/presenter/MissionPresenter.js";
 
 export const data = new SlashCommandBuilder()
   .setName("aushang")

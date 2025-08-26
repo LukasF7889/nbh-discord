@@ -1,7 +1,8 @@
 import { ButtonBuilder, ButtonStyle } from "discord.js";
 
-class Mission {
+class MissionClass {
   constructor({
+    _id,
     title,
     duration,
     description,
@@ -11,6 +12,7 @@ class Mission {
     cost,
     xp,
   }) {
+    this._id = _id || null;
     this.title = title;
     this.duration = duration;
     this.description = description;
@@ -84,15 +86,15 @@ class Mission {
   }
 
   formatOutput() {
-    return `**${this.title}**: ${this.description} (Dauer: ${this.duration} Minuten, Level: ${this.level})`;
+    return `**${this.title}**: ${this.description} (Dauer: ${this.duration} Minuten, Level: ${this.difficulty})`;
   }
 
   getButton() {
     return new ButtonBuilder()
-      .setCustomId(`mission:${this._id}`)
+      .setCustomId(`mission:${this._id.toString()}`)
       .setLabel(this.title)
       .setStyle(ButtonStyle.Primary);
   }
 }
 
-export default Mission;
+export default MissionClass;

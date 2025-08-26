@@ -15,7 +15,7 @@ class MissionPresenter {
 
   //Get a list of all mission descriptions
   static formatList(missionList) {
-    return missionList.map((m) => m.formatForDiscord());
+    return missionList.map((m) => m.formatOutput());
   }
 
   //Output mission descriptions and prepared button rows
