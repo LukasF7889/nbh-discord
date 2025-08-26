@@ -5,6 +5,10 @@ class PlayerRepository {
     return await Player.findOne({ dicordId });
   }
 
+  async create(player) {
+    await PlayerRepository.create(player);
+  }
+
   async save(player) {
     return await player.save();
   }

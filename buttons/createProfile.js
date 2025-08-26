@@ -1,4 +1,5 @@
-import Player from "../models/player.js";
+import PlayerRepository from "../classes/repositories/PlayerRepository.js";
+import Player from "../classes/entities/PlayerClass.js"; // Importiere die Player-Klasse
 import { mythTypes } from "../commands/profile.js";
 
 const handleCreateProfile = async (interaction, args) => {
@@ -6,7 +7,8 @@ const handleCreateProfile = async (interaction, args) => {
   const startValues = mythTypes[mythosType];
   const discordId = interaction.user.id;
 
-  await Player.create({
+  // Create a player object
+  const playerObj = new Player({
     id: userId,
     discordId: discordId,
     level: 1,
@@ -17,6 +19,9 @@ const handleCreateProfile = async (interaction, args) => {
     items: [],
     xp: 0,
   });
+
+  // Save player object into database
+  await PlayerRepository.create(playerObj);
 
   await interaction.update({
     content: `✅ Profil erstellt! Willkommen ${mythosName} (${mythosType})`,
