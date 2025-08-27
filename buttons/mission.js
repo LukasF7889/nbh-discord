@@ -15,11 +15,10 @@ const handleStartMission = async (interaction, args) => {
   let player;
 
   try {
-    const missionDoc = await MissionRepository.findById(missionId);
-    mission = toMissionClass(missionDoc);
+    mission = await MissionRepository.findById(missionId);
+    // mission = toMissionClass(missionDoc);
     playerId = interaction.user.id;
-    player = await PlayerRepository.findOne(playerId);
-    console.log(mission);
+    player = await PlayerRepository.findByDiscordId(playerId);
   } catch (error) {
     console.error(error);
     return;
@@ -42,7 +41,7 @@ const handleStartMission = async (interaction, args) => {
     let eventReport = [];
 
     //Render event result texts
-    if (missionResult.missionFeedback.success) {
+    if (missionResult.success) {
       for (let i = 0; i < missionResult.eventFeedback.length; i++) {
         const e = missionResult.eventFeedback[i];
         eventReport.push(
@@ -85,19 +84,25 @@ const handleStartMission = async (interaction, args) => {
         ],
         ephemeral: true,
       });
-    } else if (!missionResult.missionFeedback.success) {
-      await interaction.followUp({
-        content: `${mission.title} fehlgeschlagen. ${missionFeedback.message}. ${player.energy} Energie verbleibend.`,
+    } else if (!missionResult.success) {
+      const message =
+        missionResult.missionFeedback?.message || missionResult.message; //Did the mission run? If yes show mission feedback, if no show energy feedback
+      await interaction.reply({
+        content: `${message}. ${player.energy.current} Energie verbleibend.`,
         ephemeral: true,
       });
     } else {
-      await interaction.followUp({
+      await interaction.reply({
         content: `Etwas ist fehlgeschlagen. Mission konnte nicht durchgeführt werden`,
         ephemeral: true,
       });
     }
   } catch (error) {
     console.error(error);
+    await interaction.reply({
+      content: error.message,
+      ephemeral: true,
+    });
   }
 };
 

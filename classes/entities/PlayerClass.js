@@ -1,16 +1,18 @@
 class PlayerClass {
   constructor({
+    _id,
     discordId,
     username,
     level,
     xp,
     money,
-    energy,
+    energy = {},
     mythos,
     type,
     skills,
     items,
   }) {
+    this._id = _id;
     this.discordId = discordId;
     this.username = username;
     this.level = level;
@@ -21,6 +23,12 @@ class PlayerClass {
     this.type = type;
     this.skills = skills;
     this.items = items;
+  }
+
+  toObject() {
+    return {
+      ...this,
+    };
   }
 
   async addItemToInventory(item) {
@@ -57,12 +65,19 @@ class PlayerClass {
 
   addEnergy(amount) {
     if (amount < 0) throw new Error("Energie darf nicht negativ sein");
-    this.energy += amount;
+    if (this.energy.current + amount > this.energy.max) {
+      this.energy.current = this.energy.max;
+    } else {
+      this.energy.current += amount;
+    }
   }
 
   substractEnergy(amount) {
-    if (amount > 0) throw new Error("Energie darf nicht positiv sein");
-    this.energy -= amount;
+    if (amount < 0) throw new Error("Energie darf nicht negativ sein");
+    if (this.energy.current - amount < 0) {
+      return { error: "Nicht genug Energie vorhanden" };
+    }
+    this.energy.current -= amount;
   }
 }
 

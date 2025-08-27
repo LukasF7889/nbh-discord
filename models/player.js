@@ -68,7 +68,14 @@ const playerSchema = new mongoose.Schema({
 export default mongoose.model("Player", playerSchema);
 
 // Converting mongoose document into a oop class
-export function toPlayerClass(mongooseMissionDoc) {
-  // .toObject() removes mongoose specific fields
-  return new Player(mongooseMissionDoc.toObject());
+export function toPlayerClass(doc) {
+  if (!doc) return null;
+
+  //check if it is a mongoose document
+  if (typeof doc.toObject === "function") {
+    // .toObject() removes mongoose specific fields
+    return new Player(doc.toObject());
+  } else {
+    return new Player(doc);
+  }
 }

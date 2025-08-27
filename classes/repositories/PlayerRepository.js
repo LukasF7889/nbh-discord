@@ -1,16 +1,25 @@
 import Player from "../../models/player.js";
+import { toPlayerClass } from "../../models/player.js";
 
 class PlayerRepository {
   async findByDiscordId(discordId) {
-    return await Player.findOne({ dicordId });
+    const playerDoc = await Player.findOne({ discordId });
+    if (!playerDoc) return null;
+    return toPlayerClass(playerDoc);
   }
 
   async create(player) {
-    await PlayerRepository.create(player);
+    const playerDoc = await Player.create(player.toObject());
+    return toPlayerClass(playerDoc);
   }
 
   async save(player) {
-    return await player.save();
+    const updated = await Player.findByIdAndUpdate(
+      player._id,
+      player.toObject(),
+      { new: true }
+    );
+    return toPlayerClass(updated);
   }
 }
 

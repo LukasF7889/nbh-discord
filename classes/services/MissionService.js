@@ -11,8 +11,12 @@ class MissionService {
   }
 
   static async startMission(player, mission, events, getItemFn) {
-    if (mission.cost > player.energy) {
-      throw new Error("Nicht genug Energie, um diese Mission zu starten");
+    if (mission.cost > player.energy.current) {
+      return {
+        success: false,
+        message: "Nicht genug Energie, um die Mission zu starten",
+        player,
+      };
     }
 
     player.substractEnergy(mission.cost);
@@ -31,7 +35,12 @@ class MissionService {
 
     await PlayerRepository.save(player);
 
-    return { missionFeedback, eventFeedback, player };
+    return {
+      success: missionFeedback.success,
+      missionFeedback,
+      eventFeedback,
+      player,
+    };
   }
 }
 

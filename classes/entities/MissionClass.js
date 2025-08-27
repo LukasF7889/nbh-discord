@@ -52,7 +52,7 @@ class MissionClass {
         item,
       });
     }
-    console.log(feedback);
+
     return feedback;
   }
 
@@ -68,7 +68,7 @@ class MissionClass {
       "perception",
     ];
 
-    for (const att of this.challenge) {
+    for (const att in challenge) {
       console.log(
         `Check ${att}: Player: ${player.skills[att]} | Challenge: ${challenge[att]}`
       );

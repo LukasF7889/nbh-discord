@@ -11,7 +11,6 @@ class MissionRepository {
 
   async getRandom(amount) {
     const missions = await Mission.aggregate([{ $sample: { size: amount } }]);
-    console.log("MISSIONS ", missions);
     const missionObj = missions.map(
       (m) =>
         new MissionClass({

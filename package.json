@@ -1,10 +1,11 @@
 {
   "type": "module",
   "devDependencies": {
+    "nodemon": "^3.1.10",
     "typescript": "^5.9.2"
   },
   "scripts": {
-    "dev": "node --trace-warnings index.js --watch "
+    "dev": "nodemon --watch ./ --ext js,index.js index.js"
   },
   "dependencies": {
     "discord.js": "^14.21.0",

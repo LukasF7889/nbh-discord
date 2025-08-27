@@ -2,7 +2,7 @@ import MissionEvents from "../../models/missionEvents.js";
 
 class EventService {
   static async getRandomEvents(missionDuration) {
-    const numberOfEvents = matchMedia.ceil(missionDuration / 5);
+    const numberOfEvents = Math.ceil(missionDuration / 5);
     return MissionEvents.aggregate([{ $sample: { size: numberOfEvents } }]);
   }
 

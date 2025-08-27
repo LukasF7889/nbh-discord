@@ -17,6 +17,8 @@ export const execute = async (interaction) => {
     const { description, rows } =
       MissionPresenter.presentMissionList(missionList);
 
+    console.log("hi du");
+
     await interaction.reply({
       content: description,
       components: rows,

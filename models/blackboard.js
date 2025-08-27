@@ -11,7 +11,14 @@ const blackboardSchema = new mongoose.Schema({
 export default mongoose.model("Blackboard", blackboardSchema);
 
 // Converting mongoose document into a oop class
-export function toBlackboardClass(mongooseMissionDoc) {
-  // .toObject() removes mongoose specific fields
-  return new Blackboard(mongooseMissionDoc.toObject());
+export function toBlackboardClass(doc) {
+  if (!doc) return null;
+
+  //check if it is a mongoose document
+  if (typeof doc.toObject === "function") {
+    // .toObject() removes mongoose specific fields
+    return new Blackboard(doc.toObject());
+  } else {
+    return new Blackboard(doc);
+  }
 }

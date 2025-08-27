@@ -41,7 +41,14 @@ export const missionSchema = new mongoose.Schema({
 export default mongoose.model("Mission", missionSchema);
 
 // Converting mongoose document into a oop class
-export function toMissionClass(mongooseMissionDoc) {
-  // .toObject() removes mongoose specific fields
-  return new Mission(mongooseMissionDoc.toObject());
+export function toMissionClass(doc) {
+  if (!doc) return null;
+
+  //check if it is a mongoose document
+  if (typeof doc.toObject === "function") {
+    // .toObject() removes mongoose specific fields
+    return new Mission(doc.toObject());
+  } else {
+    return new Mission(doc);
+  }
 }
