@@ -54,7 +54,7 @@ const handleStartMission = async (interaction, args) => {
         );
       }
 
-      await interaction.followUp({
+      await interaction.reply({
         embeds: [
           new EmbedBuilder()
             .setTitle(`✅ Mission abgeschlossen: ${mission.title}`)
@@ -67,7 +67,7 @@ const handleStartMission = async (interaction, args) => {
               },
               {
                 name: "Energie",
-                value: `⚡ ${player.energy} verbleibend`,
+                value: `⚡ ${player.energy.current} / ${player.energy.max} verbleibend`,
                 inline: false,
               },
               {
