@@ -8,14 +8,21 @@ export const data = new SlashCommandBuilder()
 
 export const execute = async (interaction) => {
   try {
-    const missionList = await BlackboardService.getMissions();
+    const blackboard = await BlackboardService.getBlackboard();
+    const missionList = blackboard.currentMissions;
+
+    console.log("lastUpdated:", blackboard.lastUpdated);
+    console.log("refreshTime ms:", blackboard.refreshTime);
+    console.log("getRefreshTime:", blackboard.getRefreshTime());
 
     if (!missionList || missionList.length === 0) {
       return await interaction.reply("⚠️ Es gibt aktuell keine Missionen.");
     }
 
-    const { description, rows } =
-      MissionPresenter.presentMissionList(missionList);
+    const { description, rows } = MissionPresenter.presentMissionList(
+      missionList,
+      blackboard
+    );
 
     console.log("hi du");
 

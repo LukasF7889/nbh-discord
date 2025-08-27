@@ -19,11 +19,12 @@ class MissionPresenter {
   }
 
   //Output mission descriptions and prepared button rows
-  static presentMissionList(missions) {
+  static presentMissionList(missions, blackboard) {
     return {
       description:
-        "📜 Hier sind die aktuellen Missionen:\n" +
-        this.formatList(missions).join("\n"),
+        `📜 Hier sind die aktuellen Missionen (Neue Missionen verfügbar in ${blackboard
+          .getRefreshTime()
+          .toFixed(1)} Minuten):\n` + this.formatList(missions).join("\n"),
       rows: this.buildRows(missions),
     };
   }
