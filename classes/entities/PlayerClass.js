@@ -72,6 +72,10 @@ class PlayerClass {
     }
   }
 
+  restoreEnergy() {
+    this.energy.current = this.energy.max;
+  }
+
   substractEnergy(amount) {
     if (amount < 0) throw new Error("Energie darf nicht negativ sein");
     if (this.energy.current - amount < 0) {

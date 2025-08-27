@@ -23,7 +23,7 @@ export const execute = async (interaction) => {
       .setLabel("30⚡| 30💰")
       .setStyle(ButtonStyle.Primary),
     new ButtonBuilder()
-      .setCustomId(`spa:100`)
+      .setCustomId(`spa:full`)
       .setLabel("Full⚡| 100💰")
       .setStyle(ButtonStyle.Primary)
   );

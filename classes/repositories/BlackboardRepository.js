@@ -1,9 +1,10 @@
 import Blackboard, { toBlackboardClass } from "../../models/blackboard.js";
 import MissionRepository from "./MissionRepository.js";
+import BlackboardClass from "../entities/BlackBoardClass.js";
 
 class BlackboardRepository {
   async save(blackboard) {
-    const bb = await Blackboard.findOneAndUpdate(
+    const bbDoc = await Blackboard.findOneAndUpdate(
       { key: "main" },
       blackboard.toObject(),
       {
@@ -11,26 +12,29 @@ class BlackboardRepository {
         upsert: true,
       }
     );
-    return bb;
+    return toBlackboardClass(bbDoc);
   }
 
-  async create(refreshTimeMinutes = 300000) {
-    const newBB = await Blackboard.create({
+  async create(refreshTime = 5) {
+    const missions = await MissionRepository.getRandom(2);
+    const newBBInstance = new BlackboardClass({
       key: "main",
-      currentMissions: await MissionRepository.getRandom(2),
+      currentMissions: missions,
       lastUpdated: new Date(),
-      refreshTime: refreshTimeMinutes,
+      refreshTime, // in Minuten
     });
-    return newBB;
+
+    const bbDoc = await Blackboard.create(newBBInstance.toObject());
+    return toBlackboardClass(bbDoc);
   }
 
   async get() {
     const bbDoc = await Blackboard.findOne({ key: "main" });
-    const bb = toBlackboardClass(bbDoc);
-    if (!bb) {
+    if (!bbDoc) {
       return await this.create();
     }
-    return bb;
+
+    return toBlackboardClass(bbDoc);
   }
 }
 
