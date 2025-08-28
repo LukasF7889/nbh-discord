@@ -10,7 +10,6 @@ import dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import Mission from "./models/mission.js";
 
 // Get current directory
 const __filename = fileURLToPath(import.meta.url);

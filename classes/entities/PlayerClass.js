@@ -83,6 +83,13 @@ class PlayerClass {
     }
     this.energy.current -= amount;
   }
+
+  checkItemQuantity(item) {
+    if (!item) return;
+    const hasItem = this.items.find((e) => e.name === item);
+    if (!hasItem) return 0;
+    return hasItem.quantity;
+  }
 }
 
 export default PlayerClass;

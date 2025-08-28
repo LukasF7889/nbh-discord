@@ -4,7 +4,7 @@ import {
   ButtonStyle,
   ActionRowBuilder,
 } from "discord.js";
-import Player from "../models/player.js";
+import PlayerRepository from "../classes/repositories/PlayerRepository.js";
 
 export const data = new SlashCommandBuilder()
   .setName("spa")
@@ -12,7 +12,7 @@ export const data = new SlashCommandBuilder()
 
 export const execute = async (interaction) => {
   const discordId = interaction.user.id;
-  const player = await Player.findOne({ discordId: discordId });
+  const player = await PlayerRepository.findByDiscordId(discordId);
   if (!player) return;
 
   const rows = [];
