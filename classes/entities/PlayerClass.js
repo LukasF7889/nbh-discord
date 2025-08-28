@@ -1,3 +1,6 @@
+import calcAttributeCost from "../../utils/calcAttributeCost.js";
+import { ticketMap } from "../../utils/gameMaps.js";
+
 class PlayerClass {
   constructor({
     _id,
@@ -31,7 +34,7 @@ class PlayerClass {
     };
   }
 
-  async addItemToInventory(item) {
+  addItemToInventory(item) {
     //Validate item
     if (!item || !item.name) return;
 
@@ -55,6 +58,24 @@ class PlayerClass {
         quantity: quantity,
       });
       console.log("Added new item: ", this.items);
+    }
+  }
+
+  removeItemFromInventory(item, amount) {
+    //Validate item
+    if (!item || !item.name) throw new Error("Invalid item");
+
+    //Validate amount
+    if (amount < 1) throw new Error("Amount needs to be at least 1");
+
+    //Check if item is in inventory
+    const hasItem = this.items.find((i) => i.name === item.name);
+    if (!hasItem) throw new Error("Item not in inventory");
+    if (hasItem.quantity > amount) {
+      hasItem.quantity -= amount;
+    } else {
+      const newInv = this.items.filter((i) => i.name !== hasItem.name);
+      this.items = newInv;
     }
   }
 
@@ -89,6 +110,21 @@ class PlayerClass {
     const hasItem = this.items.find((e) => e.name === item);
     if (!hasItem) return 0;
     return hasItem.quantity;
+  }
+
+  checkAttributeUpgrade(att) {
+    // Check if player is eligable to upgrade
+    const invQuantity = this.checkItemQuantity(ticketMap[att]);
+    const cost = calcAttributeCost(this.skills[att]);
+    const isEligable = invQuantity >= cost;
+    return { isEligable, invQuantity, cost };
+  }
+
+  async increaseAttribute(att) {
+    if (!att) throw new Error("Fehler: Kein Attribut angegeben");
+
+    //Upgrade attribute
+    this.skills[att]++;
   }
 }
 

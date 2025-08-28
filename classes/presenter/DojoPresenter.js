@@ -1,15 +1,8 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
 import calcAttributeCost from "../../utils/calcAttributeCost.js";
+import { ticketMap } from "../../utils/gameMaps.js";
 
 class DojoPresenter {
-  static ticketMap = {
-    charisma: "Charisma Ticket",
-    perception: "Perception Ticket",
-    strength: "Strength Ticket",
-    intelligence: "Intelligence Ticket",
-    dexterity: "Dexterity Ticket",
-  };
-
   static getButton(att) {
     return new ButtonBuilder()
       .setCustomId(`dojo:${att}`)
@@ -23,7 +16,7 @@ class DojoPresenter {
     const itemCounts = {};
 
     for (const att in player.skills) {
-      itemCounts[att] = player.checkItemQuantity(this.ticketMap[att]);
+      itemCounts[att] = player.checkItemQuantity(ticketMap[att]);
       const checkCost = calcAttributeCost(player.skills[att]);
       if (itemCounts[att] >= checkCost) {
         buttonArr.push(att);
