@@ -1,5 +1,5 @@
 import { toMissionClass } from "../models/mission.js";
-import { EmbedBuilder, Events } from "discord.js";
+import { EmbedBuilder, Events, MessageFlags } from "discord.js";
 import getItem from "../utils/getItem.js";
 
 import MissionService from "../classes/services/MissionService.js";
@@ -27,7 +27,7 @@ const handleStartMission = async (interaction, args) => {
   if (!mission)
     return interaction.reply({
       content: "Die Mission wurde nicht gefunden",
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
 
   try {
@@ -82,26 +82,26 @@ const handleStartMission = async (interaction, args) => {
             .setFooter({ text: "Gut gemacht, Held!" })
             .setTimestamp(),
         ],
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     } else if (!missionResult.success) {
       const message =
         missionResult.missionFeedback?.message || missionResult.message; //Did the mission run? If yes show mission feedback, if no show energy feedback
       await interaction.reply({
         content: `${message}. ${player.energy.current} Energie verbleibend.`,
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     } else {
       await interaction.reply({
         content: `Etwas ist fehlgeschlagen. Mission konnte nicht durchgeführt werden`,
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     }
   } catch (error) {
     console.error(error);
     await interaction.reply({
       content: error.message,
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
   }
 };

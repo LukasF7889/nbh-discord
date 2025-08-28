@@ -3,6 +3,7 @@ import {
   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle,
+  MessageFlags,
 } from "discord.js";
 import { mythTypes } from "../commands/profile.js";
 import fs from "fs";
@@ -34,7 +35,7 @@ export default {
         console.error(error);
         await interaction.reply({
           content: "Fehler beim Ausführen des Commands!",
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
       }
     }
@@ -65,7 +66,7 @@ export default {
       await interaction.reply({
         content: `Wähle deinen Mythos-Typ für **${mythosName}**:`,
         components: rows,
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     }
 

@@ -1,3 +1,4 @@
+import { MessageFlags } from "discord.js";
 import PlayerRepository from "../classes/repositories/PlayerRepository.js";
 
 const handleSpa = async (interaction, args) => {
@@ -17,7 +18,7 @@ const handleSpa = async (interaction, args) => {
   if (player.energy.current >= player.energy.max) {
     return await interaction.reply({
       content: `Du hast bereits volle Energie!`,
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
   }
 
@@ -35,7 +36,7 @@ const handleSpa = async (interaction, args) => {
 
   await interaction.reply({
     content: `Du hast dich erholt und hast jetzt ${updatedPlayer.energy.current} / ${updatedPlayer.energy.max} Energie`,
-    ephemeral: true,
+    flags: MessageFlags.Ephemeral,
   });
 };
 

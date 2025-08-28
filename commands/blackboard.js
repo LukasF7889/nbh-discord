@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "discord.js";
+import { MessageFlags, SlashCommandBuilder } from "discord.js";
 import BlackboardService from "../classes/services/BlackboardService.js";
 import MissionPresenter from "../classes/presenter/MissionPresenter.js";
 
@@ -34,7 +34,7 @@ export const execute = async (interaction) => {
     console.error(error);
     await interaction.reply({
       content: "❌ Fehler beim Laden der Missionen.",
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
   }
 };
