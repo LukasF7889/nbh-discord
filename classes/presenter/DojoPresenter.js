@@ -16,9 +16,11 @@ class DojoPresenter {
     const itemCounts = {};
 
     for (const att in player.skills) {
-      itemCounts[att] = player.checkItemQuantity(ticketMap[att]);
-      const checkCost = calcAttributeCost(player.skills[att]);
-      if (itemCounts[att] >= checkCost) {
+      const checkUpgrade = player.checkAttributeUpgrade(att);
+      console.log(checkUpgrade);
+      itemCounts[att] = checkUpgrade.invQuantity;
+      console.log(itemCounts);
+      if (checkUpgrade.isEligable) {
         buttonArr.push(att);
       }
     }
