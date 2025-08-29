@@ -1,14 +1,19 @@
-import { MessageFlags, SlashCommandBuilder } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  MessageFlags,
+  SlashCommandBuilder,
+} from "discord.js";
 import BlackboardService from "../classes/services/BlackboardService.js";
 import MissionPresenter from "../classes/presenter/MissionPresenter.js";
+import type BlackboardClass from "../classes/entities/BlackboardClass.js";
 
 export const data = new SlashCommandBuilder()
   .setName("aushang")
   .setDescription("Zeigt die aktuellen Missionen an.");
 
-export const execute = async (interaction) => {
+export const execute = async (interaction: ChatInputCommandInteraction) => {
   try {
-    const blackboard = await BlackboardService.getBlackboard();
+    const blackboard: BlackboardClass = await BlackboardService.getBlackboard();
     const missionList = blackboard.currentMissions;
 
     console.log("lastUpdated:", blackboard.lastUpdated);
@@ -23,8 +28,6 @@ export const execute = async (interaction) => {
       missionList,
       blackboard
     );
-
-    console.log("hi du");
 
     await interaction.reply({
       content: description,

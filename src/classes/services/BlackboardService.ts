@@ -6,6 +6,7 @@ class BlackboardService {
   static async getBlackboard() {
     const blackboardDoc = await BlackboardRepository.get();
     const blackboard = toBlackboardClass(blackboardDoc);
+    if (!blackboard) throw new Error("Error receiving blackboard data");
 
     if (blackboard.needsUpdate()) {
       const newMissions = await MissionRepository.getRandom(3);

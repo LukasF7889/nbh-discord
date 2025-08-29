@@ -1,5 +1,25 @@
+import type { missionType } from "../../types/missionType.js";
+import MissionClass from "./MissionClass.js";
+
+interface BlackboardConstructorData {
+  currentMissions: MissionClass[];
+  lastUpdated?: Date | null;
+  key: string;
+  refreshTime?: number;
+}
+
 class BlackboardClass {
-  constructor({ currentMissions, lastUpdated, key, refreshTime = 300000 }) {
+  currentMissions: MissionClass[];
+  lastUpdated: Date | null;
+  key: string;
+  refreshTime: number;
+
+  constructor({
+    currentMissions,
+    lastUpdated,
+    key,
+    refreshTime = 300000,
+  }: BlackboardConstructorData) {
     this.currentMissions = currentMissions;
     this.lastUpdated = lastUpdated ? new Date(lastUpdated) : null;
     this.key = key;
@@ -20,7 +40,7 @@ class BlackboardClass {
     return needsUpdate;
   }
 
-  updateMissions(newMissions) {
+  updateMissions(newMissions: MissionClass[]) {
     this.currentMissions = newMissions;
     this.lastUpdated = new Date();
   }

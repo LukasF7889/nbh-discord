@@ -25,7 +25,7 @@ class MissionPresenter {
         `📜 Hier sind die aktuellen Missionen (Neue Missionen verfügbar in ${blackboard
           .getRefreshTime()
           .toFixed(1)} Minuten):\n` + this.formatList(missions).join("\n"),
-      rows: this.buildRows(missions),
+      rows: this.buildRows(missions).map((r) => r.toJSON()),
     };
   }
 }
