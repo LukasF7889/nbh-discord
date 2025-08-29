@@ -60,6 +60,10 @@ const playerSchema = new mongoose.Schema({
         type: Number,
         required: true,
       },
+      type: {
+        type: String,
+        required: true,
+      },
     },
   ],
   lastDailyReset: Date,

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import MissionEvent from "./models/missionEvents.js";
+import MissionEvent from "../models/missionEvents.js";
 import dotenv from "dotenv";
 
 dotenv.config();

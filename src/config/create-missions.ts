@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import Mission from "./models/mission.js";
+import Mission from "../models/mission.js";
 import dotenv from "dotenv";
 
 dotenv.config();

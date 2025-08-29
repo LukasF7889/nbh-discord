@@ -1,5 +1,5 @@
 import { EmbedBuilder, Events, MessageFlags } from "discord.js";
-import getItem from "../utils/getItem.js";
+import getItem from "../../utils/getItem.js";
 import MissionService from "../classes/services/MissionService.js";
 import PlayerRepository from "../classes/repositories/PlayerRepository.js";
 import MissionRepository from "../classes/repositories/MissionRepository.js";

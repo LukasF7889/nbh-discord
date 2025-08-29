@@ -1,31 +1,40 @@
-import calcAttributeCost from "../../utils/calcAttributeCost.js";
-import { ticketMap } from "../../utils/gameMaps.js";
+import calcAttributeCost from "../../config/calcAttributeCost.js";
+import { ticketMap } from "../../config/gameMaps.js";
+import { calcLevelUp, energyForLevel } from "../../config/calcLevelup.js";
+import type { PlayerType } from "../../types/playerType.js";
+import { mythTypes } from "../../config/mythTypes.js";
+import type { itemType } from "../../types/itemType.js";
 
-class PlayerClass {
-  constructor({
-    _id,
-    discordId,
-    username,
-    level,
-    xp,
-    money,
-    energy = {},
-    mythos,
-    type,
-    skills,
-    items,
-  }) {
-    this._id = _id;
-    this.discordId = discordId;
-    this.username = username;
-    this.level = level;
-    this.xp = xp;
-    this.money = money;
-    this.energy = energy;
-    this.mythos = mythos;
-    this.type = type;
-    this.skills = skills;
-    this.items = items;
+class PlayerClass implements PlayerType {
+  _id?: string;
+  discordId: string;
+  username: string;
+  xp: number;
+  level: number;
+  money: number;
+  energy: { current: number; max: number };
+  mythos: string;
+  type: keyof typeof mythTypes;
+  skills: {
+    charisma: number;
+    strength: number;
+    intelligence: number;
+    dexterity: number;
+    perception: number;
+  };
+  items: itemType[];
+
+  constructor(data: PlayerType) {
+    this.discordId = data.discordId;
+    this.username = data.username;
+    this.xp = data.xp;
+    this.level = data.level ?? 1;
+    this.money = data.money ?? 0;
+    this.energy = data.energy ?? { current: 100, max: 100 };
+    this.mythos = data.mythos;
+    this.type = data.type;
+    this.skills = data.skills;
+    this.items = data.items ?? [];
   }
 
   toObject() {
@@ -34,7 +43,7 @@ class PlayerClass {
     };
   }
 
-  addItemToInventory(item) {
+  addItemToInventory(item: itemType) {
     //Validate item
     if (!item || !item.name) return;
 
@@ -54,14 +63,13 @@ class PlayerClass {
       this.items.push({
         name: item.name,
         type: item.type || "unknown",
-        properties: item.properties || {},
         quantity: quantity,
       });
       console.log("Added new item: ", this.items);
     }
   }
 
-  removeItemFromInventory(item, amount) {
+  removeItemFromInventory(item: itemType, amount: number) {
     //Validate item
     if (!item || !item.name) throw new Error("Invalid item");
 
@@ -79,12 +87,30 @@ class PlayerClass {
     }
   }
 
-  addXP(amount) {
+  addXP(amount: number) {
     if (amount < 0) throw new Error("XP darf nicht negativ sein");
     this.xp += amount;
   }
 
-  addEnergy(amount) {
+  checkLevelup() {
+    const reqXP = calcLevelUp(this.level + 1);
+    return this.xp >= reqXP;
+  }
+
+  levelup() {
+    if (this.checkLevelup()) {
+      this.level += 1;
+      this.increaseMaxEnergy();
+    } else {
+      throw new Error("Not enough XP to levelup");
+    }
+  }
+
+  increaseMaxEnergy() {
+    this.energy.max = energyForLevel(this.level);
+  }
+
+  addEnergy(amount: number) {
     if (amount < 0) throw new Error("Energie darf nicht negativ sein");
     if (this.energy.current + amount > this.energy.max) {
       this.energy.current = this.energy.max;
@@ -97,7 +123,7 @@ class PlayerClass {
     this.energy.current = this.energy.max;
   }
 
-  substractEnergy(amount) {
+  substractEnergy(amount: number) {
     if (amount < 0) throw new Error("Energie darf nicht negativ sein");
     if (this.energy.current - amount < 0) {
       return { error: "Nicht genug Energie vorhanden" };
@@ -105,22 +131,23 @@ class PlayerClass {
     this.energy.current -= amount;
   }
 
-  checkItemQuantity(item) {
-    if (!item) return;
-    const hasItem = this.items.find((e) => e.name === item);
-    if (!hasItem) return 0;
+  checkItemQuantity(itemName: string) {
+    if (!itemName) return 0;
+    const hasItem = this.items.find((e) => e.name === itemName);
+    if (!hasItem || !hasItem.quantity) return 0;
     return hasItem.quantity;
   }
 
-  checkAttributeUpgrade(att) {
+  checkAttributeUpgrade(att: keyof PlayerType["skills"]) {
     // Check if player is eligable to upgrade
-    const invQuantity = this.checkItemQuantity(ticketMap[att]);
+    let invQuantity = this.checkItemQuantity(ticketMap[att]);
+    if (!invQuantity) invQuantity = 0;
     const cost = calcAttributeCost(this.skills[att]);
     const isEligable = invQuantity >= cost;
     return { isEligable, invQuantity, cost };
   }
 
-  async increaseAttribute(att) {
+  async increaseAttribute(att: keyof PlayerType["skills"]) {
     if (!att) throw new Error("Fehler: Kein Attribut angegeben");
 
     //Upgrade attribute

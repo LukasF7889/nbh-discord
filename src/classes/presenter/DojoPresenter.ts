@@ -1,6 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
-import calcAttributeCost from "../../utils/calcAttributeCost.js";
-import { ticketMap } from "../../utils/gameMaps.js";
+import calcAttributeCost from "../../config/calcAttributeCost.js";
 
 class DojoPresenter {
   static getButton(att) {
@@ -15,6 +14,7 @@ class DojoPresenter {
     const rows = [];
     const itemCounts = {};
 
+    //Check if attribute upgrade is possible
     for (const att in player.skills) {
       const checkUpgrade = player.checkAttributeUpgrade(att);
       console.log(checkUpgrade);
@@ -23,6 +23,11 @@ class DojoPresenter {
       if (checkUpgrade.isEligable) {
         buttonArr.push(att);
       }
+    }
+
+    //Check if levelup is possible
+    if (player.checkLevelup()) {
+      buttonArr.push("levelup");
     }
 
     for (let i = 0; i < buttonArr.length; i += 5) {

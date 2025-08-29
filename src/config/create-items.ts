@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import Item from "./models/item.js";
+import Item from "../models/item.js";
 import dotenv from "dotenv";
 
 dotenv.config();

@@ -1,0 +1,37 @@
+STEP 1: PROOF OF CONCEPT
+
+# TypeScript overhaul
+
+# XP Levelup functionality in Dojo
+
+# Make Missions Time based
+
+# Make Dojo Time based
+
+# Make Spa Time based
+
+# Missions have defined event types (eg CHA & STRE)
+
+# Money update: Missions bring money, SPA costs money
+
+# Error handling overhaul
+
+STEP 2: MVP
+
+# Ressources: Can be earned through missions or looting in underground location (time + money)
+
+# Workshop: Use ressources to build items
+
+# Buildable items:
+
+### Leather Jacket: Unlocks access to advanced missions (unique)
+
+### Attribute booster (per attribute): Equip when starting a mission and get +15% to attribute
+
+# Special mission board: Get more personalized missions fitting to your level and refresh them for money
+
+# Duels: Challenge other player to a duel (mix of rock,paper,scissors and an attribute comparison ). Can also equip items. Winner gets XP
+
+# Missions below player level give less xp
+
+# Missions with certain level cap can only be started with certain item
