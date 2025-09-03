@@ -1,6 +1,29 @@
 import { ButtonBuilder, ButtonStyle } from "discord.js";
+import type { MissionType } from "../../types/missionType.js";
+
+interface MissionConstructorData {
+  _id: string;
+  title: string;
+  duration: number;
+  description: string;
+  difficulty: string;
+  challenge: string;
+  message: string[];
+  cost: number;
+  xp: number;
+}
 
 class MissionClass {
+  _id: string;
+  title: string;
+  duration: number;
+  description: string;
+  difficulty: string;
+  challenge: string;
+  message: string[];
+  cost: number;
+  xp: number;
+
   constructor({
     _id,
     title,
@@ -11,8 +34,8 @@ class MissionClass {
     message,
     cost,
     xp,
-  }) {
-    this._id = _id || null;
+  }: MissionConstructorData) {
+    this._id = _id;
     this.title = title;
     this.duration = duration;
     this.description = description;

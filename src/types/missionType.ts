@@ -1,4 +1,4 @@
-export interface missionType {
+export interface MissionType {
   title: string;
   duration: number;
   description: string;

@@ -10,6 +10,7 @@ class BlackboardService {
 
     if (blackboard.needsUpdate()) {
       const newMissions = await MissionRepository.getRandom(3);
+      if (!newMissions) throw new Error("Error updating missions");
       blackboard.updateMissions(newMissions);
       await BlackboardRepository.save(blackboard);
       console.log("Got new missions");

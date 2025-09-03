@@ -3,15 +3,20 @@ import { toMissionClass } from "../../models/mission.js";
 import MissionClass from "../entities/MissionClass.js";
 
 class MissionRepository {
-  async findById(id) {
+  async findById(id: string) {
     const missionDoc = await Mission.findById(id);
     const missionObj = toMissionClass(missionDoc);
     return missionObj;
   }
 
-  async getRandom(amount) {
-    const missions = await Mission.aggregate([{ $sample: { size: amount } }]);
-    const missionObj = missions.map((m) => toMissionClass(m));
+  async getRandom(amount: number): Promise<MissionClass[] | null> {
+    const missions: MissionClass[] = await Mission.aggregate([
+      { $sample: { size: amount } },
+    ]);
+    if (!missions) return null;
+    const missionObj = missions
+      .map((m) => toMissionClass(m))
+      .filter((m): m is MissionClass => m !== null);
     return missionObj;
   }
 }
