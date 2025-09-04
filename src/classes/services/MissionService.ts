@@ -7,9 +7,10 @@ import type { MissionEventType } from "../../types/missionEventType.js";
 
 class MissionService {
   static async loadMission(missionId: string) {
-    const missionDoc = await MissionRepository.findById(missionId);
-    if (!missionDoc) return null;
-    const mission = toMissionClass(missionDoc);
+    const mission: MissionClass | null = await MissionRepository.findById(
+      missionId
+    );
+    if (!mission) return null;
     return mission;
   }
 

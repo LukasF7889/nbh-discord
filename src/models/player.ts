@@ -1,7 +1,11 @@
-import mongoose from "mongoose";
+import mongoose, { InferSchemaType } from "mongoose";
+import { Document } from "mongodb";
 import Player from "../classes/entities/PlayerClass.js";
+import { PlayerType } from "../types/playerType.js";
+import PlayerClass from "../classes/entities/PlayerClass.js";
 
 const playerSchema = new mongoose.Schema({
+  _id: String,
   discordId: { type: String, required: true, unique: true },
   username: String,
   level: { type: Number, default: 1 },
@@ -69,17 +73,45 @@ const playerSchema = new mongoose.Schema({
   lastDailyReset: Date,
 });
 
+export type PlayerDocument = InferSchemaType<typeof playerSchema>;
 export default mongoose.model("Player", playerSchema);
 
+//type guard to check if it is has the "toObject()"
+function hasToObject(
+  doc: any
+): doc is mongoose.Document & { toObject: () => PlayerDocument } {
+  return typeof doc?.toObject === "function";
+}
+
 // Converting mongoose document into a oop class
-export function toPlayerClass(doc) {
+export function toPlayerClass(
+  doc: PlayerDocument | mongoose.Document | null
+): PlayerClass | null {
   if (!doc) return null;
 
-  //check if it is a mongoose document
-  if (typeof doc.toObject === "function") {
-    // .toObject() removes mongoose specific fields
-    return new Player(doc.toObject());
-  } else {
-    return new Player(doc);
-  }
+  const obj: PlayerDocument = hasToObject(doc)
+    ? doc.toObject()
+    : (doc as PlayerDocument);
+
+  const data: PlayerType = {
+    _id: obj._id ?? "unknown_id",
+    discordId: obj.discordId,
+    username: obj.username ?? "Unknown",
+    level: obj.level ?? 1,
+    xp: obj.xp ?? 0,
+    money: obj.money ?? 0,
+    energy: obj.energy ?? { current: 0, max: 100 },
+    mythos: obj.mythos ?? "Unknown",
+    type: obj.type ?? "Geist",
+    skills: obj.skills ?? {
+      intelligence: 0,
+      charisma: 0,
+      strength: 0,
+      dexterity: 0,
+      perception: 0,
+    },
+    items: obj.items ?? [],
+  };
+
+  return new PlayerClass(data);
 }

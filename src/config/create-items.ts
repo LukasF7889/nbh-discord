@@ -6,7 +6,9 @@ dotenv.config();
 
 const createItems = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
+    if (!process.env.MONGO_URI) throw new Error("Datenbank connection missing");
+    const MONGO_URI = process.env.MONGO_URI;
+    await mongoose.connect(MONGO_URI);
     await Item.deleteMany({});
     console.log("Items entfernt");
 

@@ -4,8 +4,9 @@ import {
   ButtonBuilder,
   ButtonStyle,
   MessageFlags,
+  Interaction,
 } from "discord.js";
-import { mythTypes } from "../commands/profile.js";
+import { mythTypes } from "../config/mythTypes.js";
 import fs from "fs";
 import path from "path";
 
@@ -15,16 +16,20 @@ const buttonFiles = fs
   .filter((file) => file.endsWith(".js"));
 
 // Load button handlers
-const buttonHandlers = {};
+const buttonHandlers: {
+  [key: string]: (interaction: Interaction, args: string[]) => Promise<void>;
+} = {};
 for (const file of buttonFiles) {
   const { default: handler } = await import(`../buttons/${file}`);
   const name = file.replace(".js", "");
-  buttonHandlers[name] = handler;
+  const buttonHandlers: {
+    [key: string]: (interaction: Interaction, args: string[]) => Promise<void>;
+  } = {};
 }
 
 export default {
   name: Events.InteractionCreate,
-  async execute(interaction) {
+  async execute(interaction: Interaction) {
     // Slash-Commands
     if (interaction.isChatInputCommand()) {
       const command = interaction.client.commands.get(interaction.commandName);
@@ -46,10 +51,10 @@ export default {
       interaction.customId === "createProfileModal"
     ) {
       const mythosName = interaction.fields.getTextInputValue("mythosName");
-      const rows = [];
+      const rows: ActionRowBuilder<ButtonBuilder>[] = [];
       const types = Object.keys(mythTypes);
       for (let i = 0; i < types.length; i += 5) {
-        const row = new ActionRowBuilder();
+        const row = new ActionRowBuilder<ButtonBuilder>();
         types.slice(i, i + 5).forEach((type) => {
           row.addComponents(
             new ButtonBuilder()

@@ -1,7 +1,11 @@
-import mongoose from "mongoose";
+import mongoose, { InferSchemaType } from "mongoose";
+import { Document } from "mongodb";
 import Mission from "../classes/entities/MissionClass.js";
+import MissionClass from "../classes/entities/MissionClass.js";
+import PlayerClass from "../classes/entities/PlayerClass.js";
 
 export const missionSchema = new mongoose.Schema({
+  _id: String,
   title: String,
   duration: Number,
   description: String,
@@ -38,17 +42,36 @@ export const missionSchema = new mongoose.Schema({
   xp: Number,
 });
 
+export type MissionDocument = InferSchemaType<typeof missionSchema>;
 export default mongoose.model("Mission", missionSchema);
 
+//type guard to check if it is has the "toObject()"
+function hasToObject(
+  doc: any
+): doc is mongoose.Document & { toObject: () => MissionDocument } {
+  return typeof doc?.toObject === "function";
+}
+
 // Converting mongoose document into a oop class
-export function toMissionClass(doc) {
+export function toMissionClass(
+  doc: mongoose.Document | MissionDocument | null
+): MissionClass | null {
   if (!doc) return null;
 
-  //check if it is a mongoose document
-  if (typeof doc.toObject === "function") {
-    // .toObject() removes mongoose specific fields
-    return new Mission(doc.toObject());
-  } else {
-    return new Mission(doc);
-  }
+  const obj: MissionDocument = hasToObject(doc)
+    ? doc.toObject()
+    : (doc as MissionDocument);
+
+  //Setting defaults, because mongoDB fields in documents are not guaranteed to exist
+  return new MissionClass({
+    _id: obj._id ?? "unknown_id",
+    title: obj.title ?? "Untitled",
+    duration: obj.duration ?? 0,
+    description: obj.description ?? "",
+    difficulty: obj.difficulty ?? "Leicht",
+    challenge: obj.challenge as Record<keyof PlayerClass["skills"], number>,
+    message: obj.message as Record<string, string>,
+    cost: obj.cost ?? 0,
+    xp: obj.xp ?? 0,
+  });
 }
