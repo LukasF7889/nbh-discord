@@ -1,1 +1,1 @@
-{"version":3,"file":"isDiscordRestError.js","sourceRoot":"","sources":["../../src/utils/isDiscordRestError.ts"],"names":[],"mappings":"AAAA,SAAS,kBAAkB,CAAC,KAAc;IACxC,OAAO,OAAO,KAAK,KAAK,QAAQ,IAAI,KAAK,KAAK,IAAI,IAAI,MAAM,IAAI,KAAK,CAAC;AACxE,CAAC;AAED,eAAe,kBAAkB,CAAC"}
+{"version":3,"file":"isDiscordRestError.js","sourceRoot":"","sources":["../../src/utils/isDiscordRestError.ts"],"names":[],"mappings":"AAEA,SAAS,kBAAkB,CAAC,KAAc;IACxC,OAAO,OAAO,KAAK,KAAK,QAAQ,IAAI,KAAK,KAAK,IAAI,IAAI,MAAM,IAAI,KAAK,CAAC;AACxE,CAAC;AAED,eAAe,kBAAkB,CAAC"}

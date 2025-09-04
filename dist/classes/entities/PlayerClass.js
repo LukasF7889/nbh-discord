@@ -14,6 +14,7 @@ class PlayerClass {
     skills;
     items;
     constructor(data) {
+        this._id = data._id;
         this.discordId = data.discordId;
         this.username = data.username;
         this.xp = data.xp;

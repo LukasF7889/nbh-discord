@@ -1,5 +1,5 @@
-import { EmbedBuilder, MessageFlags } from "discord.js";
-import getItem from "../../utils/getItem.js";
+import { EmbedBuilder, MessageFlags, } from "discord.js";
+import getItem from "../utils/getItem.js";
 import MissionService from "../classes/services/MissionService.js";
 import PlayerRepository from "../classes/repositories/PlayerRepository.js";
 import MissionRepository from "../classes/repositories/MissionRepository.js";
@@ -11,9 +11,10 @@ const handleStartMission = async (interaction, args) => {
     let player;
     try {
         mission = await MissionRepository.findById(missionId);
-        // mission = toMissionClass(missionDoc);
         playerId = interaction.user.id;
         player = await PlayerRepository.findByDiscordId(playerId);
+        if (!player)
+            throw new Error("Error: Player not found");
     }
     catch (error) {
         console.error(error);
@@ -27,6 +28,8 @@ const handleStartMission = async (interaction, args) => {
     try {
         const events = await EventService.getRandomEvents(mission.duration);
         const missionResult = await MissionService.startMission(player, mission, events, getItem);
+        if (!missionResult || !missionResult.eventFeedback)
+            throw new Error("Error receiving mission results");
         let eventReport = [];
         //Render event result texts
         if (missionResult.success) {
@@ -76,11 +79,16 @@ const handleStartMission = async (interaction, args) => {
         }
     }
     catch (error) {
-        console.error(error);
-        await interaction.reply({
-            content: error.message,
-            flags: MessageFlags.Ephemeral,
-        });
+        if (error instanceof Error) {
+            console.error(error);
+            await interaction.reply({
+                content: error.message,
+                flags: MessageFlags.Ephemeral,
+            });
+        }
+        else {
+            console.error("Unknown error occured");
+        }
     }
 };
 export default handleStartMission;

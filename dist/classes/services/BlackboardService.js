@@ -9,7 +9,7 @@ class BlackboardService {
             throw new Error("Error receiving blackboard data");
         if (blackboard.needsUpdate()) {
             const newMissions = await MissionRepository.getRandom(3);
-            if (!newMissions || newMissions.length === 0)
+            if (!newMissions)
                 throw new Error("Error updating missions");
             blackboard.updateMissions(newMissions);
             await BlackboardRepository.save(blackboard);

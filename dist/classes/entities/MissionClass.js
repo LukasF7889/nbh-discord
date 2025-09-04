@@ -1,7 +1,16 @@
 import { ButtonBuilder, ButtonStyle } from "discord.js";
 class MissionClass {
+    _id;
+    title;
+    duration;
+    description;
+    difficulty;
+    challenge;
+    message;
+    cost;
+    xp;
     constructor({ _id, title, duration, description, difficulty, challenge, message, cost, xp, }) {
-        this._id = _id || null;
+        this._id = _id;
         this.title = title;
         this.duration = duration;
         this.description = description;
@@ -52,7 +61,8 @@ class MissionClass {
             "dexterity",
             "perception",
         ];
-        for (const att in challenge) {
+        for (const attStr in challenge) {
+            const att = attStr;
             console.log(`Check ${att}: Player: ${player.skills[att]} | Challenge: ${challenge[att]}`);
             if (player.skills[att] < challenge[att]) {
                 return {

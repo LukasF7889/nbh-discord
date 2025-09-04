@@ -1,22 +1,31 @@
 import { Events, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags, } from "discord.js";
-import { mythTypes } from "../commands/profile.js";
+import { mythTypes } from "../config/mythTypes.js";
 import fs from "fs";
 import path from "path";
-const buttonsPath = path.join("./buttons");
-const buttonFiles = fs
-    .readdirSync(buttonsPath)
-    .filter((file) => file.endsWith(".js"));
-// Load button handlers
+import { fileURLToPath } from "url";
+// __dirname in ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+// Path to buttons folder (relative to this event file)
+const buttonsPath = path.join(__dirname, "../buttons");
+// Read button files if folder exists
+let buttonFiles = [];
+if (fs.existsSync(buttonsPath)) {
+    buttonFiles = fs
+        .readdirSync(buttonsPath)
+        .filter((file) => file.endsWith(".js") || file.endsWith(".ts"));
+}
+// Map of button handlers
 const buttonHandlers = {};
 for (const file of buttonFiles) {
-    const { default: handler } = await import(`../buttons/${file}`);
-    const name = file.replace(".js", "");
+    const { default: handler } = await import(`file://${path.join(buttonsPath, file)}`);
+    const name = file.replace(/\.(js|ts)$/, "");
     buttonHandlers[name] = handler;
 }
 export default {
     name: Events.InteractionCreate,
     async execute(interaction) {
-        // Slash-Commands
+        // Slash commands
         if (interaction.isChatInputCommand()) {
             const command = interaction.client.commands.get(interaction.commandName);
             if (!command)
@@ -27,12 +36,12 @@ export default {
             catch (error) {
                 console.error(error);
                 await interaction.reply({
-                    content: "Fehler beim Ausführen des Commands!",
+                    content: "Error executing the command!",
                     flags: MessageFlags.Ephemeral,
                 });
             }
         }
-        // Modal Submit
+        // Modal submission
         if (interaction.isModalSubmit() &&
             interaction.customId === "createProfileModal") {
             const mythosName = interaction.fields.getTextInputValue("mythosName");
@@ -49,18 +58,23 @@ export default {
                 rows.push(row);
             }
             await interaction.reply({
-                content: `Wähle deinen Mythos-Typ für **${mythosName}**:`,
+                content: `Choose your Mythos type for **${mythosName}**:`,
                 components: rows,
                 flags: MessageFlags.Ephemeral,
             });
         }
-        // Button Click
+        // Button click
         if (interaction.isButton()) {
             const [action, ...args] = interaction.customId.split(":");
             const handler = buttonHandlers[action];
             if (!handler)
-                return console.error("Kein Button-Handler für", action);
-            await handler(interaction, args);
+                return console.error("No button handler for", action);
+            try {
+                await handler(interaction, args);
+            }
+            catch (error) {
+                console.error("Error handling button click:", error);
+            }
         }
     },
 };

@@ -1,9 +1,10 @@
-import PlayerRepository from "../../classes/repositories/PlayerRepository.js";
+import PlayerRepository from "../classes/repositories/PlayerRepository.js";
 import { MessageFlags } from "discord.js";
-import { ticketMap } from "../../config/gameMaps.js";
+import { ticketMap } from "../config/gameMaps.js";
 const handleDojo = async (interaction, args) => {
-    const [att] = args;
+    const [attStr] = args;
     const playerId = interaction.user.id;
+    const att = attStr;
     let player;
     try {
         player = await PlayerRepository.findByDiscordId(playerId);

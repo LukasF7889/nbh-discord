@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { missionSchema } from "./mission.js";
-import BlackboardClass from "../classes/entities/BlackBoardClass.js";
+import BlackboardClass from "../classes/entities/BlackboardClass.js";
 import MissionClass from "../classes/entities/MissionClass.js";
 const blackboardSchema = new mongoose.Schema({
     currentMissions: [missionSchema],

@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
-import Mission from "../classes/entities/MissionClass.js";
+import MissionClass from "../classes/entities/MissionClass.js";
 export const missionSchema = new mongoose.Schema({
+    _id: String,
     title: String,
     duration: Number,
     description: String,
@@ -37,17 +38,28 @@ export const missionSchema = new mongoose.Schema({
     xp: Number,
 });
 export default mongoose.model("Mission", missionSchema);
+//type guard to check if it is has the "toObject()"
+function hasToObject(doc) {
+    return typeof doc?.toObject === "function";
+}
 // Converting mongoose document into a oop class
 export function toMissionClass(doc) {
     if (!doc)
         return null;
-    //check if it is a mongoose document
-    if (typeof doc.toObject === "function") {
-        // .toObject() removes mongoose specific fields
-        return new Mission(doc.toObject());
-    }
-    else {
-        return new Mission(doc);
-    }
+    const obj = hasToObject(doc)
+        ? doc.toObject()
+        : doc;
+    //Setting defaults, because mongoDB fields in documents are not guaranteed to exist
+    return new MissionClass({
+        _id: obj._id ?? "unknown_id",
+        title: obj.title ?? "Untitled",
+        duration: obj.duration ?? 0,
+        description: obj.description ?? "",
+        difficulty: obj.difficulty ?? "Leicht",
+        challenge: obj.challenge,
+        message: obj.message,
+        cost: obj.cost ?? 0,
+        xp: obj.xp ?? 0,
+    });
 }
 //# sourceMappingURL=mission.js.map

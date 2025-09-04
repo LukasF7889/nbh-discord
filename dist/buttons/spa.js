@@ -8,6 +8,8 @@ const handleSpa = async (interaction, args) => {
     try {
         playerId = interaction.user.id;
         player = await PlayerRepository.findByDiscordId(playerId);
+        if (!player)
+            throw new Error("Player not found");
     }
     catch (error) {
         console.error(error);

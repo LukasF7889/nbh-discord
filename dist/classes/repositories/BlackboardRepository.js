@@ -1,6 +1,6 @@
 import Blackboard, { toBlackboardClass } from "../../models/blackboard.js";
 import MissionRepository from "./MissionRepository.js";
-import BlackboardClass from "../entities/BlackBoardClass.js";
+import BlackboardClass from "../entities/BlackboardClass.js";
 class BlackboardRepository {
     async save(blackboard) {
         const bbDoc = await Blackboard.findOneAndUpdate({ key: "main" }, blackboard.toObject(), {
@@ -10,7 +10,9 @@ class BlackboardRepository {
         return toBlackboardClass(bbDoc);
     }
     async create(refreshTime = 5) {
-        const missions = await MissionRepository.getRandom(2);
+        const missions = await MissionRepository.getRandom(3);
+        if (!missions)
+            throw new Error("Error getting missions");
         const newBBInstance = new BlackboardClass({
             key: "main",
             currentMissions: missions,

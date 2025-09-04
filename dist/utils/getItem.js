@@ -1,4 +1,4 @@
-import Item from "../src/models/item.js";
+import Item from "../models/item.js";
 const getItem = async (att) => {
     const item = await Item.aggregate([
         { $match: { type: att } },
