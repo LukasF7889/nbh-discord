@@ -2,6 +2,7 @@ import { mythTypes } from "../config/mythTypes.js";
 import type { itemType } from "./itemType.js";
 
 export interface PlayerType {
+  _id: string;
   discordId: string;
   username: string;
   xp: number;

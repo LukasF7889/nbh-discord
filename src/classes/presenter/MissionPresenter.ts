@@ -1,8 +1,11 @@
 import { ActionRowBuilder } from "discord.js";
+import MissionClass from "../entities/MissionClass.js";
+import { blackboardType } from "../../types/blackboardType.js";
+import BlackboardClass from "../entities/BlackboardClass.js";
 
 class MissionPresenter {
   //Build actionsrows for a mission list
-  static buildRows(missionList) {
+  static buildRows(missionList: MissionClass[]) {
     const rows = [];
     for (let i = 0; i < missionList.length; i += 5) {
       const row = new ActionRowBuilder();
@@ -14,12 +17,15 @@ class MissionPresenter {
   }
 
   //Get a list of all mission descriptions
-  static formatList(missionList) {
+  static formatList(missionList: MissionClass[]) {
     return missionList.map((m) => m.formatOutput());
   }
 
   //Output mission descriptions and prepared button rows
-  static presentMissionList(missions, blackboard) {
+  static presentMissionList(
+    missions: MissionClass[],
+    blackboard: BlackboardClass
+  ) {
     return {
       description:
         `📜 Hier sind die aktuellen Missionen (Neue Missionen verfügbar in ${blackboard

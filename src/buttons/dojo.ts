@@ -1,10 +1,13 @@
-import PlayerRepository from "../../classes/repositories/PlayerRepository.js";
-import { MessageFlags } from "discord.js";
-import { ticketMap } from "../../config/gameMaps.js";
+import PlayerRepository from "../classes/repositories/PlayerRepository.js";
+import { ButtonInteraction, MessageFlags } from "discord.js";
+import { ticketMap } from "../config/gameMaps.js";
+import { itemType } from "../types/itemType.js";
+import PlayerClass from "../classes/entities/PlayerClass.js";
 
-const handleDojo = async (interaction, args) => {
-  const [att] = args;
+const handleDojo = async (interaction: ButtonInteraction, args: string[]) => {
+  const [attStr]: string[] = args;
   const playerId = interaction.user.id;
+  const att = attStr as keyof PlayerClass["skills"] | "levelup";
   let player;
 
   try {
@@ -25,7 +28,9 @@ const handleDojo = async (interaction, args) => {
         console.error(error);
       }
     } else {
-      const ticket = player.items.find((i) => i.name === ticketMap[att]);
+      const ticket = player.items.find(
+        (i: itemType) => i.name === ticketMap[att]
+      );
       if (!ticket) throw new Error(`Kein ${ticketMap[att]} vorhanden`);
       const upgradeCheck = player.checkAttributeUpgrade(att);
 

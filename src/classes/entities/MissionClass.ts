@@ -1,5 +1,7 @@
 import { ButtonBuilder, ButtonStyle } from "discord.js";
 import type { MissionType } from "../../types/missionType.js";
+import PlayerClass from "./PlayerClass.js";
+import { MissionEventType } from "../../types/missionEventType.js";
 
 interface MissionConstructorData {
   _id: string;
@@ -7,8 +9,8 @@ interface MissionConstructorData {
   duration: number;
   description: string;
   difficulty: string;
-  challenge: string;
-  message: string[];
+  challenge: Record<keyof PlayerClass["skills"], number>;
+  message: Record<string, string>;
   cost: number;
   xp: number;
 }
@@ -19,8 +21,8 @@ class MissionClass {
   duration: number;
   description: string;
   difficulty: string;
-  challenge: string;
-  message: string[];
+  challenge: Record<keyof PlayerClass["skills"], number>;
+  message: Record<string, string>;
   cost: number;
   xp: number;
 
@@ -54,7 +56,11 @@ class MissionClass {
     return Math.floor(Math.random() * 20) + 1;
   }
 
-  async callEvents(player, events, getItemFn) {
+  async callEvents(
+    player: PlayerClass,
+    events: MissionEventType[],
+    getItemFn: (Parameters: string) => Promise<any>
+  ) {
     let feedback = [];
 
     for (const event of events) {
@@ -83,7 +89,7 @@ class MissionClass {
     return feedback;
   }
 
-  checkSuccess(player) {
+  checkSuccess(player: PlayerClass) {
     if (!player || !this) return;
     const { challenge } = this;
     const feedback = { success: false, message: "" };
@@ -95,7 +101,8 @@ class MissionClass {
       "perception",
     ];
 
-    for (const att in challenge) {
+    for (const attStr in challenge) {
+      const att = attStr as keyof PlayerClass["skills"];
       console.log(
         `Check ${att}: Player: ${player.skills[att]} | Challenge: ${challenge[att]}`
       );

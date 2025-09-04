@@ -16,7 +16,7 @@ class MissionService {
   static async startMission(
     player: PlayerClass,
     mission: MissionClass,
-    events: MissionEventType,
+    events: MissionEventType[],
     getItemFn: (att: string) => Promise<any>
   ) {
     if (mission.cost > player.energy.current) {
@@ -39,7 +39,7 @@ class MissionService {
     const eventFeedback = await mission.callEvents(player, events, getItemFn);
 
     for (const e of eventFeedback) {
-      if (e.item?.quantity) await player.addItemToInventory(e.item);
+      if (e.item?.quantity) player.addItemToInventory(e.item);
     }
 
     await PlayerRepository.save(player);

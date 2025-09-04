@@ -1,7 +1,7 @@
-import { MessageFlags } from "discord.js";
+import { ButtonInteraction, MessageFlags } from "discord.js";
 import PlayerRepository from "../classes/repositories/PlayerRepository.js";
 
-const handleSpa = async (interaction, args) => {
+const handleSpa = async (interaction: ButtonInteraction, args: string[]) => {
   const [amountStr] = args;
   let playerId;
   let player;
@@ -10,6 +10,7 @@ const handleSpa = async (interaction, args) => {
   try {
     playerId = interaction.user.id;
     player = await PlayerRepository.findByDiscordId(playerId);
+    if (!player) throw new Error("Player not found");
   } catch (error) {
     console.error(error);
     return;

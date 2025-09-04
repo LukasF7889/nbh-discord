@@ -1,4 +1,4 @@
-import type { missionType } from "../../types/missionType.js";
+import type { MissionType } from "../../types/missionType.js";
 import MissionClass from "./MissionClass.js";
 
 interface BlackboardConstructorData {

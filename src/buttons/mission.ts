@@ -1,11 +1,20 @@
-import { EmbedBuilder, Events, MessageFlags } from "discord.js";
-import getItem from "../../utils/getItem.js";
+import {
+  EmbedBuilder,
+  Events,
+  ButtonInteraction,
+  MessageFlags,
+} from "discord.js";
+import getItem from "../utils/getItem.js";
 import MissionService from "../classes/services/MissionService.js";
 import PlayerRepository from "../classes/repositories/PlayerRepository.js";
 import MissionRepository from "../classes/repositories/MissionRepository.js";
 import EventService from "../classes/services/EventService.js";
+import { MissionEventType } from "../types/missionEventType.js";
 
-const handleStartMission = async (interaction, args) => {
+const handleStartMission = async (
+  interaction: ButtonInteraction,
+  args: string
+) => {
   const [missionId] = args;
 
   let mission;
@@ -14,9 +23,9 @@ const handleStartMission = async (interaction, args) => {
 
   try {
     mission = await MissionRepository.findById(missionId);
-    // mission = toMissionClass(missionDoc);
     playerId = interaction.user.id;
     player = await PlayerRepository.findByDiscordId(playerId);
+    if (!player) throw new Error("Error: Player not found");
   } catch (error) {
     console.error(error);
     return;
@@ -29,13 +38,17 @@ const handleStartMission = async (interaction, args) => {
     });
 
   try {
-    const events = await EventService.getRandomEvents(mission.duration);
+    const events: MissionEventType[] = await EventService.getRandomEvents(
+      mission.duration
+    );
     const missionResult = await MissionService.startMission(
       player,
       mission,
       events,
       getItem
     );
+    if (!missionResult || !missionResult.eventFeedback)
+      throw new Error("Error receiving mission results");
     let eventReport = [];
 
     //Render event result texts
@@ -96,11 +109,15 @@ const handleStartMission = async (interaction, args) => {
       });
     }
   } catch (error) {
-    console.error(error);
-    await interaction.reply({
-      content: error.message,
-      flags: MessageFlags.Ephemeral,
-    });
+    if (error instanceof Error) {
+      console.error(error);
+      await interaction.reply({
+        content: error.message,
+        flags: MessageFlags.Ephemeral,
+      });
+    } else {
+      console.error("Unknown error occured");
+    }
   }
 };
 

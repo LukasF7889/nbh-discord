@@ -6,7 +6,7 @@ import { mythTypes } from "../../config/mythTypes.js";
 import type { itemType } from "../../types/itemType.js";
 
 class PlayerClass implements PlayerType {
-  _id?: string;
+  _id: string;
   discordId: string;
   username: string;
   xp: number;
@@ -25,6 +25,7 @@ class PlayerClass implements PlayerType {
   items: itemType[];
 
   constructor(data: PlayerType) {
+    this._id = data._id;
     this.discordId = data.discordId;
     this.username = data.username;
     this.xp = data.xp;
