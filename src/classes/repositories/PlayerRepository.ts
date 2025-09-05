@@ -18,8 +18,8 @@ class PlayerRepository {
   }
 
   async save(player: PlayerClass): Promise<PlayerClass> {
-    const updated = await Player.findByIdAndUpdate(
-      player._id,
+    const updated = await Player.findOneAndUpdate(
+      { discordId: player.discordId },
       player.toObject(),
       { new: true }
     );

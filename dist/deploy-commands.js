@@ -64,4 +64,6 @@ const rest = new REST().setToken(DISCORD_TOKEN);
         console.error("❌ Error deploying commands:", error);
     }
 })();
+const data = await rest.get(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID));
+console.log("Registered commands:", data);
 //# sourceMappingURL=deploy-commands.js.map

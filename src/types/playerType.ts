@@ -1,8 +1,9 @@
 import { mythTypes } from "../config/mythTypes.js";
 import type { itemType } from "./itemType.js";
+import { Types } from "mongoose";
 
 export interface PlayerType {
-  _id: string;
+  _id?: Types.ObjectId;
   discordId: string;
   username: string;
   xp: number;

@@ -1,11 +1,11 @@
 import Mission from "../../models/mission.js";
-import { toMissionClass } from "../../models/mission.js";
+import { objToMissionClass, docToMissionClass } from "../../models/mission.js";
 class MissionRepository {
     async findById(id) {
         const missionDoc = await Mission.findById(id);
         if (!missionDoc)
             return null;
-        const missionObj = toMissionClass(missionDoc);
+        const missionObj = docToMissionClass(missionDoc);
         if (!missionObj)
             return null;
         return missionObj;
@@ -15,8 +15,9 @@ class MissionRepository {
         if (!missions)
             return null;
         const missionObj = missions
-            .map((m) => toMissionClass(m))
+            .map((m) => objToMissionClass(m))
             .filter((m) => m !== null);
+        console.log("FETCHED MISSIONS ", missionObj);
         return missionObj;
     }
 }

@@ -94,7 +94,7 @@ export function toPlayerClass(
     : (doc as PlayerDocument);
 
   const data: PlayerType = {
-    _id: obj._id ?? "unknown_id",
+    // _id: obj._id ?? "unknown_id",
     discordId: obj.discordId,
     username: obj.username ?? "Unknown",
     level: obj.level ?? 1,

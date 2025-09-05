@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import MissionClass from "../classes/entities/MissionClass.js";
 export const missionSchema = new mongoose.Schema({
-    _id: String,
     title: String,
     duration: Number,
     description: String,
@@ -42,16 +41,14 @@ export default mongoose.model("Mission", missionSchema);
 function hasToObject(doc) {
     return typeof doc?.toObject === "function";
 }
-// Converting mongoose document into a oop class
-export function toMissionClass(doc) {
-    if (!doc)
-        return null;
-    const obj = hasToObject(doc)
-        ? doc.toObject()
-        : doc;
-    //Setting defaults, because mongoDB fields in documents are not guaranteed to exist
+// shared helper: takes a plain object and returns MissionClass
+function buildMissionClass(obj) {
+    let id;
+    if (obj._id != null)
+        id = obj._id.toString();
+    console.log("Converting id: ", id, obj._id);
     return new MissionClass({
-        _id: obj._id ?? "unknown_id",
+        _id: id,
         title: obj.title ?? "Untitled",
         duration: obj.duration ?? 0,
         description: obj.description ?? "",
@@ -61,5 +58,18 @@ export function toMissionClass(doc) {
         cost: obj.cost ?? 0,
         xp: obj.xp ?? 0,
     });
+}
+// for Mongoose Documents
+export function docToMissionClass(doc) {
+    if (!doc)
+        return null;
+    const obj = "toObject" in doc ? doc.toObject() : doc;
+    return buildMissionClass(obj);
+}
+// for plain objects
+export function objToMissionClass(obj) {
+    if (!obj)
+        return null;
+    return buildMissionClass(obj);
 }
 //# sourceMappingURL=mission.js.map

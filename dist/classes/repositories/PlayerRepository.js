@@ -15,7 +15,7 @@ class PlayerRepository {
         return playerClass;
     }
     async save(player) {
-        const updated = await Player.findByIdAndUpdate(player._id, player.toObject(), { new: true });
+        const updated = await Player.findOneAndUpdate({ discordId: player.discordId }, player.toObject(), { new: true });
         const playerClass = toPlayerClass(updated);
         if (!playerClass)
             throw new Error("Failed to save player");

@@ -23,6 +23,8 @@ class MissionService {
             player.addXP(mission.xp);
         }
         const eventFeedback = await mission.callEvents(player, events, getItemFn);
+        if (!eventFeedback)
+            throw new Error("Something went wrong with the events");
         for (const e of eventFeedback) {
             if (e.item?.quantity)
                 player.addItemToInventory(e.item);

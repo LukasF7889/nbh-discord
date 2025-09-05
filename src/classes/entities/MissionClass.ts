@@ -4,7 +4,7 @@ import PlayerClass from "./PlayerClass.js";
 import { MissionEventType } from "../../types/missionEventType.js";
 
 interface MissionConstructorData {
-  _id: string;
+  _id?: string;
   title: string;
   duration: number;
   description: string;
@@ -16,7 +16,7 @@ interface MissionConstructorData {
 }
 
 class MissionClass {
-  _id: string;
+  _id?: string;
   title: string;
   duration: number;
   description: string;
@@ -124,6 +124,10 @@ class MissionClass {
   }
 
   getButton() {
+    if (!this._id) {
+      throw new Error("Mission ID fehlt!");
+    }
+
     return new ButtonBuilder()
       .setCustomId(`mission:${this._id.toString()}`)
       .setLabel(this.title)

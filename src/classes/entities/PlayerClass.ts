@@ -4,9 +4,10 @@ import { calcLevelUp, energyForLevel } from "../../config/calcLevelup.js";
 import type { PlayerType } from "../../types/playerType.js";
 import { mythTypes } from "../../config/mythTypes.js";
 import type { itemType } from "../../types/itemType.js";
+import { Types } from "mongoose";
 
 class PlayerClass implements PlayerType {
-  _id: string;
+  _id?: Types.ObjectId;
   discordId: string;
   username: string;
   xp: number;

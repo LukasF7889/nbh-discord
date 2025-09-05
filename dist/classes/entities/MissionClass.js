@@ -77,6 +77,9 @@ class MissionClass {
         return `**${this.title}**: ${this.description} (Dauer: ${this.duration} Minuten, Level: ${this.difficulty})`;
     }
     getButton() {
+        if (!this._id) {
+            throw new Error("Mission ID fehlt!");
+        }
         return new ButtonBuilder()
             .setCustomId(`mission:${this._id.toString()}`)
             .setLabel(this.title)

@@ -1,4 +1,3 @@
-import { toMissionClass } from "../../models/mission.js";
 import MissionClass from "../entities/MissionClass.js";
 import PlayerClass from "../entities/PlayerClass.js";
 import MissionRepository from "../repositories/MissionRepository.js";
@@ -38,6 +37,7 @@ class MissionService {
     }
 
     const eventFeedback = await mission.callEvents(player, events, getItemFn);
+    if (!eventFeedback) throw new Error("Something went wrong with the events");
 
     for (const e of eventFeedback) {
       if (e.item?.quantity) player.addItemToInventory(e.item);

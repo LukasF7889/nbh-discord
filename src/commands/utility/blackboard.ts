@@ -15,6 +15,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   try {
     const blackboard: BlackboardClass = await BlackboardService.getBlackboard();
     const missionList = blackboard.currentMissions;
+    console.log(missionList);
 
     console.log("lastUpdated:", blackboard.lastUpdated);
     console.log("refreshTime ms:", blackboard.refreshTime);

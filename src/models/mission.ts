@@ -1,11 +1,10 @@
 import mongoose, { InferSchemaType } from "mongoose";
-import { Document } from "mongodb";
 import Mission from "../classes/entities/MissionClass.js";
 import MissionClass from "../classes/entities/MissionClass.js";
 import PlayerClass from "../classes/entities/PlayerClass.js";
+import { Document } from "mongodb";
 
 export const missionSchema = new mongoose.Schema({
-  _id: String,
   title: String,
   duration: Number,
   description: String,
@@ -52,19 +51,15 @@ function hasToObject(
   return typeof doc?.toObject === "function";
 }
 
-// Converting mongoose document into a oop class
-export function toMissionClass(
-  doc: mongoose.Document | MissionDocument | null
-): MissionClass | null {
-  if (!doc) return null;
-
-  const obj: MissionDocument = hasToObject(doc)
-    ? doc.toObject()
-    : (doc as MissionDocument);
-
-  //Setting defaults, because mongoDB fields in documents are not guaranteed to exist
+// shared helper: takes a plain object and returns MissionClass
+function buildMissionClass(
+  obj: Partial<MissionDocument> & { _id?: any }
+): MissionClass {
+  let id: string | undefined;
+  if (obj._id != null) id = obj._id.toString();
+  console.log("Converting id: ", id, obj._id);
   return new MissionClass({
-    _id: obj._id ?? "unknown_id",
+    _id: id,
     title: obj.title ?? "Untitled",
     duration: obj.duration ?? 0,
     description: obj.description ?? "",
@@ -74,4 +69,24 @@ export function toMissionClass(
     cost: obj.cost ?? 0,
     xp: obj.xp ?? 0,
   });
+}
+
+// for Mongoose Documents
+export function docToMissionClass(
+  doc: mongoose.Document | null
+): MissionClass | null {
+  if (!doc) return null;
+
+  const obj = "toObject" in doc ? doc.toObject() : doc;
+
+  return buildMissionClass(obj);
+}
+
+// for plain objects
+export function objToMissionClass(
+  obj: (Partial<MissionDocument> & { _id?: any }) | null
+): MissionClass | null {
+  if (!obj) return null;
+
+  return buildMissionClass(obj);
 }

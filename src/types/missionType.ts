@@ -1,5 +1,5 @@
 export interface MissionType {
-  _id: string;
+  _id?: string;
   title: string;
   duration: number;
   description: string;

@@ -23,6 +23,7 @@ const handleStartMission = async (
 
   try {
     mission = await MissionRepository.findById(missionId);
+    if (!mission) throw new Error("Mission not found");
     playerId = interaction.user.id;
     player = await PlayerRepository.findByDiscordId(playerId);
     if (!player) throw new Error("Error: Player not found");
@@ -32,7 +33,7 @@ const handleStartMission = async (
   }
 
   if (!mission)
-    return interaction.reply({
+    await interaction.reply({
       content: "Die Mission wurde nicht gefunden",
       flags: MessageFlags.Ephemeral,
     });
@@ -47,12 +48,12 @@ const handleStartMission = async (
       events,
       getItem
     );
-    if (!missionResult || !missionResult.eventFeedback)
-      throw new Error("Error receiving mission results");
+    console.log(missionResult);
+    if (!missionResult) throw new Error("Error receiving mission results");
     let eventReport = [];
 
     //Render event result texts
-    if (missionResult.success) {
+    if (missionResult.success && missionResult.eventFeedback) {
       for (let i = 0; i < missionResult.eventFeedback.length; i++) {
         const e = missionResult.eventFeedback[i];
         eventReport.push(

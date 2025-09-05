@@ -16,7 +16,6 @@ const handleCreateProfile = async (
 
   // Create a player object
   const playerObj = new PlayerClass({
-    _id: userId,
     discordId: discordId,
     level: 1,
     username: interaction.user.username,
