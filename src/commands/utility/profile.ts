@@ -8,10 +8,10 @@ import {
   EmbedBuilder,
 } from "discord.js";
 import type { ChatInputCommandInteraction } from "discord.js";
-import Player from "../models/player.js";
-import type { PlayerType } from "../types/playerType.js";
-import PlayerRepository from "../classes/repositories/PlayerRepository.js";
-import type PlayerClass from "../classes/entities/PlayerClass.js";
+import Player from "../../models/player.js";
+import type { PlayerType } from "../../types/playerType.js";
+import PlayerRepository from "../../classes/repositories/PlayerRepository.js";
+import type PlayerClass from "../../classes/entities/PlayerClass.js";
 
 export const data = new SlashCommandBuilder()
   .setName("profil")

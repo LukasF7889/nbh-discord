@@ -1,3 +1,4 @@
+// Require the necessary discord.js classes
 import {
   Client,
   GatewayIntentBits,
@@ -5,7 +6,8 @@ import {
   REST,
   Routes,
   ChatInputCommandInteraction,
-  Events as DiscordEvents,
+  MessageFlags,
+  Events,
 } from "discord.js";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
@@ -16,105 +18,63 @@ import type { Command } from "./types/commands.js";
 import type { Event } from "./types/events.js";
 
 dotenv.config();
-
 const { MONGO_URI, DISCORD_TOKEN, CLIENT_ID, GUILD_ID } = process.env;
-if (!MONGO_URI || !DISCORD_TOKEN || !CLIENT_ID || !GUILD_ID) {
-  throw new Error("Missing required environment variables!");
-}
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Create a new client instance
+const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+client.commands = new Collection();
 
-const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
-  ],
-});
-
-// Command Collection
-client.commands = new Collection<string, Command>();
-
-// Load Commands
+// Dynamically retrieve command files
 const commandsPath = path.join(__dirname, "commands");
 const commandFiles = fs
   .readdirSync(commandsPath)
-  .filter((f) => f.endsWith(".ts") || f.endsWith(".js"));
-
+  .filter((file) => file.endsWith(".js"));
 for (const file of commandFiles) {
   const filePath = path.join(commandsPath, file);
-  const commandModule = await import(`file://${filePath}`);
-  const command: Command = commandModule.default ?? commandModule;
-
+  const command = await import(filePath);
+  // Set a new item in the Collection with the key as the command name and the value as the exported module
   if ("data" in command && "execute" in command) {
     client.commands.set(command.data.name, command);
   } else {
-    console.warn(`Skipping invalid command file: ${file}`);
+    console.log(
+      `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
+    );
   }
 }
 
-// Connect MongoDB
-mongoose
-  .connect(MONGO_URI)
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => console.error("❌ Mongo Error:", err));
-
-// Register Slash Commands
-client.once("ready", async () => {
-  console.log(`🤖 Logged in as ${client.user!.tag}`);
-
-  const rest = new REST({ version: "10" }).setToken(DISCORD_TOKEN);
-  const commandsData = Array.from(client.commands.values()).map((cmd) =>
-    cmd.data.toJSON()
-  );
-
-  try {
-    console.log("⏳ Registering Slash Commands...");
-    await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), {
-      body: commandsData,
-    });
-    console.log("✅ Slash Commands registered to guild");
-  } catch (err) {
-    console.error("❌ Error registering commands:", err);
-  }
+// When the client is ready, run this code (only once).
+// The distinction between `client: Client<boolean>` and `readyClient: Client<true>` is important for TypeScript developers.
+// It makes some properties non-nullable.
+client.once(Events.ClientReady, (readyClient) => {
+  console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 });
 
-// Interaction Handler
-client.on(DiscordEvents.InteractionCreate, async (interaction) => {
+client.on(Events.InteractionCreate, async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
+  const command = interaction.client.commands.get(interaction.commandName);
 
-  const command = client.commands.get(interaction.commandName);
-  if (!command)
-    return console.error(`No command found for ${interaction.commandName}`);
+  if (!command) {
+    console.error(`No command matching ${interaction.commandName} was found.`);
+    return;
+  }
 
   try {
-    await command.execute(interaction as ChatInputCommandInteraction);
-  } catch (err) {
-    console.error(err);
-    await interaction.reply({
-      content: "Error executing command.",
-      ephemeral: true,
-    });
+    await command.execute(interaction);
+  } catch (error) {
+    console.error(error);
+    if (interaction.replied || interaction.deferred) {
+      await interaction.followUp({
+        content: "There was an error while executing this command!",
+        flags: MessageFlags.Ephemeral,
+      });
+    } else {
+      await interaction.reply({
+        content: "There was an error while executing this command!",
+        flags: MessageFlags.Ephemeral,
+      });
+    }
   }
 });
 
-// Load Events
-const eventsPath = path.join(__dirname, "events");
-const eventFiles = fs
-  .readdirSync(eventsPath)
-  .filter((f) => f.endsWith(".ts") || f.endsWith(".js"));
-
-for (const file of eventFiles) {
-  const filePath = path.join(eventsPath, file);
-  const eventModule = await import(`file://${filePath}`);
-  const event: Event = eventModule.default ?? eventModule;
-
-  if (event.once) {
-    client.once(event.name, (...args) => event.execute(...args));
-  } else {
-    client.on(event.name, (...args) => event.execute(...args));
-  }
-}
-
+// Log in to Discord with your client's token
 client.login(DISCORD_TOKEN);

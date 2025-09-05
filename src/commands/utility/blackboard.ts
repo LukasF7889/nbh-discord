@@ -3,9 +3,9 @@ import {
   MessageFlags,
   SlashCommandBuilder,
 } from "discord.js";
-import BlackboardService from "../classes/services/BlackboardService.js";
-import MissionPresenter from "../classes/presenter/MissionPresenter.js";
-import type BlackboardClass from "../classes/entities/BlackboardClass.js";
+import BlackboardService from "../../classes/services/BlackboardService.js";
+import MissionPresenter from "../../classes/presenter/MissionPresenter.js";
+import type BlackboardClass from "../../classes/entities/BlackboardClass.js";
 
 export const data = new SlashCommandBuilder()
   .setName("aushang")

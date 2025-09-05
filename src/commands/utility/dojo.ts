@@ -4,9 +4,9 @@ import {
   SlashCommandBuilder,
   type InteractionReplyOptions,
 } from "discord.js";
-import PlayerRepository from "../classes/repositories/PlayerRepository.js";
-import DojoPresenter from "../classes/presenter/DojoPresenter.js";
-import type PlayerClass from "../classes/entities/PlayerClass.js";
+import PlayerRepository from "../../classes/repositories/PlayerRepository.js";
+import DojoPresenter from "../../classes/presenter/DojoPresenter.js";
+import type PlayerClass from "../../classes/entities/PlayerClass.js";
 
 export const data = new SlashCommandBuilder()
   .setName("dojo")

@@ -4,9 +4,9 @@ import {
   ButtonStyle,
   ActionRowBuilder,
 } from "discord.js";
-import PlayerRepository from "../classes/repositories/PlayerRepository.js";
+import PlayerRepository from "../../classes/repositories/PlayerRepository.js";
 import type { ChatInputCommandInteraction } from "discord.js";
-import type PlayerClass from "../classes/entities/PlayerClass.js";
+import type PlayerClass from "../../classes/entities/PlayerClass.js";
 
 export const data = new SlashCommandBuilder()
   .setName("spa")
