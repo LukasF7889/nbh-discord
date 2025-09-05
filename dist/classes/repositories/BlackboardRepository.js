@@ -9,7 +9,7 @@ class BlackboardRepository {
         });
         return toBlackboardClass(bbDoc);
     }
-    async create(refreshTime = 5) {
+    async create(refreshTime = 300000) {
         const missions = await MissionRepository.getRandom(3);
         if (!missions)
             throw new Error("Error getting missions");
@@ -17,7 +17,7 @@ class BlackboardRepository {
             key: "main",
             currentMissions: missions,
             lastUpdated: new Date(),
-            refreshTime, // in Minuten
+            refreshTime,
         });
         const bbDoc = await Blackboard.create(newBBInstance.toObject());
         return toBlackboardClass(bbDoc);

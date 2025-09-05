@@ -5,7 +5,7 @@ interface BlackboardConstructorData {
   currentMissions: MissionClass[];
   lastUpdated?: Date | null;
   key: string;
-  refreshTime?: number;
+  refreshTime: number;
 }
 
 class BlackboardClass {
@@ -18,7 +18,7 @@ class BlackboardClass {
     currentMissions,
     lastUpdated,
     key,
-    refreshTime = 300000,
+    refreshTime,
   }: BlackboardConstructorData) {
     this.currentMissions = currentMissions;
     this.lastUpdated = lastUpdated ? new Date(lastUpdated) : null;

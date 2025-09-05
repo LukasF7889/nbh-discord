@@ -3,7 +3,7 @@ class BlackboardClass {
     lastUpdated;
     key;
     refreshTime;
-    constructor({ currentMissions, lastUpdated, key, refreshTime = 300000, }) {
+    constructor({ currentMissions, lastUpdated, key, refreshTime, }) {
         this.currentMissions = currentMissions;
         this.lastUpdated = lastUpdated ? new Date(lastUpdated) : null;
         this.key = key;

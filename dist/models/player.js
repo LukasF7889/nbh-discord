@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import PlayerClass from "../classes/entities/PlayerClass.js";
 const playerSchema = new mongoose.Schema({
-    _id: String,
     discordId: { type: String, required: true, unique: true },
     username: String,
     level: { type: Number, default: 1 },

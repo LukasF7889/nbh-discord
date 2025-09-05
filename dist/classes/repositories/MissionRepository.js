@@ -17,7 +17,6 @@ class MissionRepository {
         const missionObj = missions
             .map((m) => objToMissionClass(m))
             .filter((m) => m !== null);
-        console.log("FETCHED MISSIONS ", missionObj);
         return missionObj;
     }
 }
