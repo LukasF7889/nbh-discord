@@ -13,12 +13,18 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
-import type { Command } from "./types/commands.js";
-import type { Event } from "./types/events.js";
+import { dirname } from "path";
+import { fileURLToPath, pathToFileURL } from "url";
 
 dotenv.config();
+
 const { MONGO_URI, DISCORD_TOKEN, CLIENT_ID, GUILD_ID } = process.env;
+if (!MONGO_URI || !DISCORD_TOKEN || !CLIENT_ID || !GUILD_ID) {
+  throw new Error("Missing required environment variables!");
+}
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Create a new client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
@@ -31,7 +37,7 @@ const commandFiles = fs
   .filter((file) => file.endsWith(".js"));
 for (const file of commandFiles) {
   const filePath = path.join(commandsPath, file);
-  const command = await import(filePath);
+  const command = await import(pathToFileURL(filePath).href);
   // Set a new item in the Collection with the key as the command name and the value as the exported module
   if ("data" in command && "execute" in command) {
     client.commands.set(command.data.name, command);
@@ -74,6 +80,22 @@ client.on(Events.InteractionCreate, async (interaction) => {
       });
     }
   }
+});
+
+// Connect MongoDB
+mongoose
+  .connect(MONGO_URI)
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch((err) => console.error("❌ Mongo Error:", err));
+
+// Register Slash Commands
+client.once("ready", async () => {
+  console.log(`🤖 Logged in as ${client.user!.tag}`);
+
+  const rest = new REST({ version: "10" }).setToken(DISCORD_TOKEN);
+  const commandsData = Array.from(client.commands.values()).map((cmd) =>
+    cmd.data.toJSON()
+  );
 });
 
 // Log in to Discord with your client's token
