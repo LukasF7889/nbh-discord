@@ -19,7 +19,8 @@
 - **JavaScript & TypeScript** – Core logic and type safety.  
 - **Node.js** – Runtime environment for the bot.  
 - **Discord.js** – API wrapper for creating a Discord bot.  
-- **Mongoose** – MongoDB integration for persisting player data.  
+- **Mongoose** – MongoDB integration for persisting player data.
+- **Typegoose** - Reduces code repetition for model and type definiton.
 
 ---
 
