@@ -1,6 +1,6 @@
 import Player from "../../models/player.js";
 import { toPlayerClass } from "../../models/player.js";
-import type { PlayerType } from "../../types/playerType.js";
+import type { PlayerType } from "../../types/playerTypeOLD";
 import PlayerClass from "../entities/PlayerClass.js";
 
 class PlayerRepository {

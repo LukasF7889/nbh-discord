@@ -1,7 +1,7 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
 import calcAttributeCost from "../../config/calcAttributeCost.js";
 import type PlayerClass from "../entities/PlayerClass.js";
-import type { PlayerType } from "../../types/playerType.js";
+import type { PlayerType } from "../../types/playerTypeOLD";
 
 class DojoPresenter {
   static getButton(att: keyof PlayerClass["skills"] | "levelup") {

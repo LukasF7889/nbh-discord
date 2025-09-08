@@ -1,51 +1,45 @@
 import { ButtonBuilder, ButtonStyle } from "discord.js";
-import type { MissionType } from "../../types/missionType.js";
 import PlayerClass from "./PlayerClass.js";
-import { MissionEventType } from "../../types/missionEventType.js";
-
-interface MissionConstructorData {
-  _id?: string;
-  title: string;
-  duration: number;
-  description: string;
-  difficulty: string;
-  challenge: Record<keyof PlayerClass["skills"], number>;
-  message: Record<string, string>;
-  cost: number;
-  xp: number;
-}
+import { getModelForClass, prop } from "@typegoose/typegoose";
+import mongoose from "mongoose";
+import MissionEventClass from "./MissionEventClass.js";
 
 class MissionClass {
+  @prop()
   _id?: string;
-  title: string;
-  duration: number;
-  description: string;
-  difficulty: string;
-  challenge: Record<keyof PlayerClass["skills"], number>;
-  message: Record<string, string>;
-  cost: number;
-  xp: number;
 
-  constructor({
-    _id,
-    title,
-    duration,
-    description,
-    difficulty,
-    challenge,
-    message,
-    cost,
-    xp,
-  }: MissionConstructorData) {
-    this._id = _id;
-    this.title = title;
-    this.duration = duration;
-    this.description = description;
-    this.difficulty = difficulty;
-    this.challenge = challenge;
-    this.message = message;
-    this.cost = cost;
-    this.xp = xp;
+  @prop({ required: true })
+  title: string = "unknown";
+
+  @prop({ required: true })
+  duration: number = 0;
+
+  @prop({ required: true })
+  description: string = "unknown";
+
+  @prop({ required: true })
+  difficulty: string = "Easy";
+
+  @prop({ required: true })
+  challenge: Record<keyof PlayerClass["skills"], number> = {
+    charisma: 1,
+    strength: 1,
+    perception: 1,
+    intelligence: 1,
+    dexterity: 1,
+  };
+
+  @prop({ required: true })
+  message: Record<string, string> = { message: "unknown message" };
+
+  @prop({ required: true })
+  cost: number = 1;
+
+  @prop({ required: true })
+  xp: number = 1;
+
+  constructor(data?: Partial<MissionClass>) {
+    Object.assign(this, data); // fills all fields
   }
 
   toObject() {
@@ -58,7 +52,7 @@ class MissionClass {
 
   async callEvents(
     player: PlayerClass,
-    events: MissionEventType[],
+    events: MissionEventClass[],
     getItemFn: (Parameters: string) => Promise<any>
   ) {
     let feedback = [];
@@ -67,6 +61,8 @@ class MissionClass {
       const dice = this.rollD20();
       let item = null;
 
+      if (event.type === "unknown")
+        throw new Error("Unknown event was triggered");
       const isSuccess = dice + player.skills?.[event.type] >= event.difficulty;
 
       if (isSuccess) {
@@ -133,6 +129,54 @@ class MissionClass {
       .setLabel(this.title)
       .setStyle(ButtonStyle.Primary);
   }
+
+  //type guard to check if it is has the "toObject()"
+  hasToObject(
+    doc: any
+  ): doc is mongoose.Document & { toObject: () => MissionClass } {
+    return typeof doc?.toObject === "function";
+  }
+
+  // shared helper: takes a plain object and returns MissionClass
+  static buildMissionClass(
+    obj: Partial<MissionClass> & { _id?: any }
+  ): MissionClass {
+    let id: string | undefined;
+    if (obj._id != null) id = obj._id.toString();
+    console.log("Converting id: ", id, obj._id);
+    return new MissionClass({
+      _id: id,
+      title: obj.title ?? "Untitled",
+      duration: obj.duration ?? 0,
+      description: obj.description ?? "",
+      difficulty: obj.difficulty ?? "Leicht",
+      challenge: obj.challenge ?? {
+        charisma: 1,
+        strength: 1,
+        perception: 1,
+        intelligence: 1,
+        dexterity: 1,
+      },
+      message: obj.message ?? { message: "unknown message" },
+      cost: obj.cost ?? 0,
+      xp: obj.xp ?? 0,
+    });
+  }
+
+  // for Mongoose Documents
+  static fromDoc(doc: mongoose.Document | null): MissionClass | null {
+    if (!doc) return null;
+    return this.buildMissionClass(doc.toObject());
+  }
+
+  // for plain objects
+  static fromObj(
+    obj: (Partial<MissionClass> & { _id?: any }) | null
+  ): MissionClass | null {
+    if (!obj) return null;
+    return this.buildMissionClass(obj);
+  }
 }
 
+export const MissionModel = getModelForClass(MissionClass);
 export default MissionClass;

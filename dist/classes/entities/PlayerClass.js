@@ -1,30 +1,36 @@
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 import calcAttributeCost from "../../config/calcAttributeCost.js";
 import { ticketMap } from "../../config/gameMaps.js";
 import { calcLevelUp, energyForLevel } from "../../config/calcLevelup.js";
+import { getModelForClass, prop } from "@typegoose/typegoose";
+import ItemClass from "./ItemClass.js";
 class PlayerClass {
-    _id;
-    discordId;
-    username;
-    xp;
-    level;
-    money;
-    energy;
-    mythos;
-    type;
-    skills;
+    discordId = "";
+    username = "Unknown";
+    xp = 0;
+    level = 1;
+    money = 0;
+    energy = { current: 0, max: 100 };
+    mythos = "Unknown";
+    type = "Geist";
+    skills = {
+        charisma: 0,
+        strength: 0,
+        intelligence: 0,
+        dexterity: 0,
+        perception: 0,
+    };
     items;
     constructor(data) {
-        this._id = data._id;
-        this.discordId = data.discordId;
-        this.username = data.username;
-        this.xp = data.xp;
-        this.level = data.level ?? 1;
-        this.money = data.money ?? 0;
-        this.energy = data.energy ?? { current: 100, max: 100 };
-        this.mythos = data.mythos;
-        this.type = data.type;
-        this.skills = data.skills;
-        this.items = data.items ?? [];
+        Object.assign(this, data); // fills all fields
     }
     toObject() {
         return {
@@ -50,6 +56,7 @@ class PlayerClass {
                 name: item.name,
                 type: item.type || "unknown",
                 quantity: quantity,
+                properties: item.properties || {},
             });
             console.log("Added new item: ", this.items);
         }
@@ -139,5 +146,54 @@ class PlayerClass {
         this.skills[att]++;
     }
 }
+__decorate([
+    prop({ required: true, unique: true }),
+    __metadata("design:type", String)
+], PlayerClass.prototype, "discordId", void 0);
+__decorate([
+    prop({ required: true }),
+    __metadata("design:type", String)
+], PlayerClass.prototype, "username", void 0);
+__decorate([
+    prop({ default: 0 }),
+    __metadata("design:type", Number)
+], PlayerClass.prototype, "xp", void 0);
+__decorate([
+    prop({ default: 1 }),
+    __metadata("design:type", Number)
+], PlayerClass.prototype, "level", void 0);
+__decorate([
+    prop({ default: 0 }),
+    __metadata("design:type", Number)
+], PlayerClass.prototype, "money", void 0);
+__decorate([
+    prop({ default: { current: 0, max: 100 } }),
+    __metadata("design:type", Object)
+], PlayerClass.prototype, "energy", void 0);
+__decorate([
+    prop({ required: true }),
+    __metadata("design:type", String)
+], PlayerClass.prototype, "mythos", void 0);
+__decorate([
+    prop({ required: true }),
+    __metadata("design:type", Object)
+], PlayerClass.prototype, "type", void 0);
+__decorate([
+    prop({
+        default: {
+            charisma: 0,
+            strength: 0,
+            intelligence: 0,
+            dexterity: 0,
+            perception: 0,
+        },
+    }),
+    __metadata("design:type", Object)
+], PlayerClass.prototype, "skills", void 0);
+__decorate([
+    prop({ type: () => [ItemClass], default: [] }),
+    __metadata("design:type", Array)
+], PlayerClass.prototype, "items", void 0);
+export const PlayerModel = getModelForClass(PlayerClass);
 export default PlayerClass;
 //# sourceMappingURL=PlayerClass.js.map

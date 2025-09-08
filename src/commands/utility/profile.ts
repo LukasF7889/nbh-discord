@@ -9,7 +9,7 @@ import {
 } from "discord.js";
 import type { ChatInputCommandInteraction } from "discord.js";
 import Player from "../../models/player.js";
-import type { PlayerType } from "../../types/playerType.js";
+import type { PlayerType } from "../../types/playerTypeOLD";
 import PlayerRepository from "../../classes/repositories/PlayerRepository.js";
 import type PlayerClass from "../../classes/entities/PlayerClass.js";
 

@@ -1,42 +1,63 @@
 import calcAttributeCost from "../../config/calcAttributeCost.js";
 import { ticketMap } from "../../config/gameMaps.js";
 import { calcLevelUp, energyForLevel } from "../../config/calcLevelup.js";
-import type { PlayerType } from "../../types/playerType.js";
 import { mythTypes } from "../../config/mythTypes.js";
-import type { itemType } from "../../types/itemType.js";
-import { Types } from "mongoose";
+import { getModelForClass, prop } from "@typegoose/typegoose";
+import ItemClass from "./ItemClass.js";
 
-class PlayerClass implements PlayerType {
-  _id?: Types.ObjectId;
-  discordId: string;
-  username: string;
-  xp: number;
-  level: number;
-  money: number;
-  energy: { current: number; max: number };
-  mythos: string;
-  type: keyof typeof mythTypes;
+class PlayerClass {
+  @prop({ required: true, unique: true })
+  discordId: string = "";
+
+  @prop({ required: true })
+  username: string = "Unknown";
+
+  @prop({ default: 0 })
+  xp: number = 0;
+
+  @prop({ default: 1 })
+  level: number = 1;
+
+  @prop({ default: 0 })
+  money: number = 0;
+
+  @prop({ default: { current: 0, max: 100 } })
+  energy = { current: 0, max: 100 };
+
+  @prop({ required: true })
+  mythos: string = "Unknown";
+
+  @prop({ required: true })
+  type: keyof typeof mythTypes = "Geist";
+
+  @prop({
+    default: {
+      charisma: 0,
+      strength: 0,
+      intelligence: 0,
+      dexterity: 0,
+      perception: 0,
+    },
+  })
   skills: {
-    charisma: number;
-    strength: number;
-    intelligence: number;
-    dexterity: number;
-    perception: number;
+    charisma: 0;
+    strength: 0;
+    intelligence: 0;
+    dexterity: 0;
+    perception: 0;
+  } = {
+    charisma: 0,
+    strength: 0,
+    intelligence: 0,
+    dexterity: 0,
+    perception: 0,
   };
-  items: itemType[];
 
-  constructor(data: PlayerType) {
-    this._id = data._id;
-    this.discordId = data.discordId;
-    this.username = data.username;
-    this.xp = data.xp;
-    this.level = data.level ?? 1;
-    this.money = data.money ?? 0;
-    this.energy = data.energy ?? { current: 100, max: 100 };
-    this.mythos = data.mythos;
-    this.type = data.type;
-    this.skills = data.skills;
-    this.items = data.items ?? [];
+  @prop({ type: () => [ItemClass], default: [] })
+  items!: ItemClass[];
+
+  constructor(data?: Partial<PlayerClass>) {
+    Object.assign(this, data); // fills all fields
   }
 
   toObject() {
@@ -45,7 +66,7 @@ class PlayerClass implements PlayerType {
     };
   }
 
-  addItemToInventory(item: itemType) {
+  addItemToInventory(item: ItemClass) {
     //Validate item
     if (!item || !item.name) return;
 
@@ -66,12 +87,13 @@ class PlayerClass implements PlayerType {
         name: item.name,
         type: item.type || "unknown",
         quantity: quantity,
+        properties: item.properties || {},
       });
       console.log("Added new item: ", this.items);
     }
   }
 
-  removeItemFromInventory(item: itemType, amount: number) {
+  removeItemFromInventory(item: ItemClass, amount: number) {
     //Validate item
     if (!item || !item.name) throw new Error("Invalid item");
 
@@ -140,7 +162,7 @@ class PlayerClass implements PlayerType {
     return hasItem.quantity;
   }
 
-  checkAttributeUpgrade(att: keyof PlayerType["skills"]) {
+  checkAttributeUpgrade(att: keyof PlayerClass["skills"]) {
     // Check if player is eligable to upgrade
     let invQuantity = this.checkItemQuantity(ticketMap[att]);
     if (!invQuantity) invQuantity = 0;
@@ -149,7 +171,7 @@ class PlayerClass implements PlayerType {
     return { isEligable, invQuantity, cost };
   }
 
-  async increaseAttribute(att: keyof PlayerType["skills"]) {
+  async increaseAttribute(att: keyof PlayerClass["skills"]) {
     if (!att) throw new Error("Fehler: Kein Attribut angegeben");
 
     //Upgrade attribute
@@ -157,4 +179,5 @@ class PlayerClass implements PlayerType {
   }
 }
 
+export const PlayerModel = getModelForClass(PlayerClass);
 export default PlayerClass;
