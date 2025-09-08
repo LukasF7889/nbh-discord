@@ -2,18 +2,11 @@ import MissionClass from "./MissionClass.js";
 import { getModelForClass, prop } from "@typegoose/typegoose";
 import { Document } from "mongodb";
 
-interface BlackboardConstructorData {
-  currentMissions: MissionClass[];
-  lastUpdated?: Date | null;
-  key: string;
-  refreshTime: number;
-}
-
 class BlackboardClass {
   @prop({ type: () => [MissionClass], required: true })
   currentMissions: MissionClass[] = [];
 
-  @prop({ default: () => new Date() })
+  @prop({ type: () => Date, default: () => new Date() })
   lastUpdated: Date | null = new Date();
 
   @prop()
@@ -26,10 +19,10 @@ class BlackboardClass {
     Object.assign(this, data); // fills all fields
   }
 
-  toObject() {
+  toPlainObject() {
     return {
       ...this,
-      currentMissions: this.currentMissions.map((m) => m.toObject()), // zurück in plain objects
+      currentMissions: this.currentMissions.map((m) => m.toPlainObject()), // zurück in plain objects
     };
   }
 
@@ -52,38 +45,24 @@ class BlackboardClass {
     return Math.max(0, remaining / 1000 / 60);
   }
 
-  static fromDoc(
-    doc: PlayerDocument | mongoose.Document | null
-  ): PlayerClass | null {
+  static fromDoc(doc: Document | null): BlackboardClass | null {
     if (!doc) return null;
 
-    const obj: PlayerDocument = hasToObject(doc)
-      ? doc.toObject()
-      : (doc as PlayerDocument);
+    const obj = typeof doc.toObject === "function" ? doc.toObject() : doc;
 
-    const data: PlayerType = {
-      // _id: obj._id ?? "unknown_id",
-      discordId: obj.discordId,
-      username: obj.username ?? "Unknown",
-      level: obj.level ?? 1,
-      xp: obj.xp ?? 0,
-      money: obj.money ?? 0,
-      energy: obj.energy ?? { current: 0, max: 100 },
-      mythos: obj.mythos ?? "Unknown",
-      type: obj.type ?? "Geist",
-      skills: obj.skills ?? {
-        intelligence: 0,
-        charisma: 0,
-        strength: 0,
-        dexterity: 0,
-        perception: 0,
-      },
-      items: obj.items ?? [],
-    };
+    // Ensure lastUpdated is a Date object
+    obj.lastUpdated = obj.lastUpdated ? new Date(obj.lastUpdated) : null;
 
-    return new PlayerClass(data);
+    // Map currentMissions into MissionClass objects
+    obj.currentMissions = obj.currentMissions.map(
+      (m: any) => new MissionClass(m)
+    );
+
+    return new BlackboardClass(obj);
   }
 }
 
-export const BlackboardModel = getModelForClass(BlackboardClass);
+export const BlackboardModel = getModelForClass(BlackboardClass, {
+  schemaOptions: { collection: "blackboards" },
+});
 export default BlackboardClass;

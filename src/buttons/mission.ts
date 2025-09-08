@@ -48,9 +48,10 @@ const handleStartMission = async (
       events,
       ItemRepository.getItem
     );
-    console.log(missionResult);
     if (!missionResult) throw new Error("Error receiving mission results");
     let eventReport = [];
+
+    console.log(missionResult);
 
     //Render event result texts
     if (missionResult.success && missionResult.eventFeedback) {

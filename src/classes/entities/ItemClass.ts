@@ -5,9 +5,6 @@ class ItemClass {
   name: string = "undefined";
 
   @prop({ required: true })
-  properties: Record<string, any> = {};
-
-  @prop({ required: true })
   type:
     | "charisma"
     | "intelligence"
@@ -24,5 +21,7 @@ class ItemClass {
   }
 }
 
-export const ItemModel = getModelForClass(ItemClass);
+export const ItemModel = getModelForClass(ItemClass, {
+  schemaOptions: { collection: "items" },
+});
 export default ItemClass;

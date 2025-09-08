@@ -7,7 +7,7 @@ class BlackboardRepository {
   async save(blackboard: BlackboardClass) {
     const bbDoc = await BlackboardModel.findOneAndUpdate(
       { key: "main" },
-      blackboard.toObject(),
+      blackboard.toPlainObject(),
       {
         new: true,
         upsert: true,
@@ -27,7 +27,7 @@ class BlackboardRepository {
       refreshTime,
     });
 
-    const bbDoc = await BlackboardModel.create(newBBInstance.toObject());
+    const bbDoc = await BlackboardModel.create(newBBInstance.toPlainObject());
     return BlackboardClass.fromDoc(bbDoc);
   }
 

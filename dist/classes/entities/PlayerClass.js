@@ -12,27 +12,61 @@ import { ticketMap } from "../../config/gameMaps.js";
 import { calcLevelUp, energyForLevel } from "../../config/calcLevelup.js";
 import { getModelForClass, prop } from "@typegoose/typegoose";
 import ItemClass from "./ItemClass.js";
+class Energy {
+    current = 0;
+    max = 100;
+}
+__decorate([
+    prop({ default: 0 }),
+    __metadata("design:type", Number)
+], Energy.prototype, "current", void 0);
+__decorate([
+    prop({ default: 100 }),
+    __metadata("design:type", Number)
+], Energy.prototype, "max", void 0);
+class Skills {
+    charisma = 0;
+    strength = 0;
+    intelligence = 0;
+    dexterity = 0;
+    perception = 0;
+}
+__decorate([
+    prop({ default: 0 }),
+    __metadata("design:type", Number)
+], Skills.prototype, "charisma", void 0);
+__decorate([
+    prop({ default: 0 }),
+    __metadata("design:type", Number)
+], Skills.prototype, "strength", void 0);
+__decorate([
+    prop({ default: 0 }),
+    __metadata("design:type", Number)
+], Skills.prototype, "intelligence", void 0);
+__decorate([
+    prop({ default: 0 }),
+    __metadata("design:type", Number)
+], Skills.prototype, "dexterity", void 0);
+__decorate([
+    prop({ default: 0 }),
+    __metadata("design:type", Number)
+], Skills.prototype, "perception", void 0);
 class PlayerClass {
     discordId = "";
     username = "Unknown";
     xp = 0;
     level = 1;
     money = 0;
-    energy = { current: 0, max: 100 };
+    energy = new Energy();
     mythos = "Unknown";
+    //setting allowMixed to 0 here to keep code DRY and ignore the typegoose warning
     type = "Geist";
-    skills = {
-        charisma: 0,
-        strength: 0,
-        intelligence: 0,
-        dexterity: 0,
-        perception: 0,
-    };
+    skills = new Skills();
     items;
     constructor(data) {
         Object.assign(this, data); // fills all fields
     }
-    toObject() {
+    toPlainObject() {
         return {
             ...this,
         };
@@ -83,7 +117,6 @@ class PlayerClass {
                 name: item.name,
                 type: item.type || "unknown",
                 quantity: quantity,
-                properties: item.properties || {},
             });
             console.log("Added new item: ", this.items);
         }
@@ -194,7 +227,7 @@ __decorate([
     __metadata("design:type", Number)
 ], PlayerClass.prototype, "money", void 0);
 __decorate([
-    prop({ default: { current: 0, max: 100 } }),
+    prop({ type: () => Energy, required: true, _id: false }),
     __metadata("design:type", Object)
 ], PlayerClass.prototype, "energy", void 0);
 __decorate([
@@ -202,25 +235,21 @@ __decorate([
     __metadata("design:type", String)
 ], PlayerClass.prototype, "mythos", void 0);
 __decorate([
-    prop({ required: true }),
+    prop({ required: true, allowMixed: 0 })
+    //setting allowMixed to 0 here to keep code DRY and ignore the typegoose warning
+    ,
     __metadata("design:type", Object)
 ], PlayerClass.prototype, "type", void 0);
 __decorate([
-    prop({
-        default: {
-            charisma: 0,
-            strength: 0,
-            intelligence: 0,
-            dexterity: 0,
-            perception: 0,
-        },
-    }),
+    prop({ type: () => Skills, required: true, _id: false }),
     __metadata("design:type", Object)
 ], PlayerClass.prototype, "skills", void 0);
 __decorate([
     prop({ type: () => [ItemClass], default: [] }),
     __metadata("design:type", Array)
 ], PlayerClass.prototype, "items", void 0);
-export const PlayerModel = getModelForClass(PlayerClass);
+export const PlayerModel = getModelForClass(PlayerClass, {
+    schemaOptions: { collection: "players" },
+});
 export default PlayerClass;
 //# sourceMappingURL=PlayerClass.js.map

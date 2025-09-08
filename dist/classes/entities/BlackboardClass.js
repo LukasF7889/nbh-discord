@@ -17,10 +17,10 @@ class BlackboardClass {
     constructor(data) {
         Object.assign(this, data); // fills all fields
     }
-    toObject() {
+    toPlainObject() {
         return {
             ...this,
-            currentMissions: this.currentMissions.map((m) => m.toObject()), // zurück in plain objects
+            currentMissions: this.currentMissions.map((m) => m.toPlainObject()), // zurück in plain objects
         };
     }
     needsUpdate() {
@@ -43,29 +43,12 @@ class BlackboardClass {
     static fromDoc(doc) {
         if (!doc)
             return null;
-        const obj = hasToObject(doc)
-            ? doc.toObject()
-            : doc;
-        const data = {
-            // _id: obj._id ?? "unknown_id",
-            discordId: obj.discordId,
-            username: obj.username ?? "Unknown",
-            level: obj.level ?? 1,
-            xp: obj.xp ?? 0,
-            money: obj.money ?? 0,
-            energy: obj.energy ?? { current: 0, max: 100 },
-            mythos: obj.mythos ?? "Unknown",
-            type: obj.type ?? "Geist",
-            skills: obj.skills ?? {
-                intelligence: 0,
-                charisma: 0,
-                strength: 0,
-                dexterity: 0,
-                perception: 0,
-            },
-            items: obj.items ?? [],
-        };
-        return new PlayerClass(data);
+        const obj = typeof doc.toObject === "function" ? doc.toObject() : doc;
+        // Ensure lastUpdated is a Date object
+        obj.lastUpdated = obj.lastUpdated ? new Date(obj.lastUpdated) : null;
+        // Map currentMissions into MissionClass objects
+        obj.currentMissions = obj.currentMissions.map((m) => new MissionClass(m));
+        return new BlackboardClass(obj);
     }
 }
 __decorate([
@@ -73,7 +56,7 @@ __decorate([
     __metadata("design:type", Array)
 ], BlackboardClass.prototype, "currentMissions", void 0);
 __decorate([
-    prop({ default: () => new Date() }),
+    prop({ type: () => Date, default: () => new Date() }),
     __metadata("design:type", Object)
 ], BlackboardClass.prototype, "lastUpdated", void 0);
 __decorate([
@@ -84,6 +67,8 @@ __decorate([
     prop(),
     __metadata("design:type", Number)
 ], BlackboardClass.prototype, "refreshTime", void 0);
-export const BlackboardModel = getModelForClass(BlackboardClass);
+export const BlackboardModel = getModelForClass(BlackboardClass, {
+    schemaOptions: { collection: "blackboards" },
+});
 export default BlackboardClass;
 //# sourceMappingURL=BlackboardClass.js.map

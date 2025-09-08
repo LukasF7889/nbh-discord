@@ -9,6 +9,66 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { ButtonBuilder, ButtonStyle } from "discord.js";
 import { getModelForClass, prop } from "@typegoose/typegoose";
+import mongoose from "mongoose";
+class Challenge {
+    charisma;
+    strength;
+    perception;
+    intelligence;
+    dexterity;
+}
+__decorate([
+    prop(),
+    __metadata("design:type", Number)
+], Challenge.prototype, "charisma", void 0);
+__decorate([
+    prop(),
+    __metadata("design:type", Number)
+], Challenge.prototype, "strength", void 0);
+__decorate([
+    prop(),
+    __metadata("design:type", Number)
+], Challenge.prototype, "perception", void 0);
+__decorate([
+    prop(),
+    __metadata("design:type", Number)
+], Challenge.prototype, "intelligence", void 0);
+__decorate([
+    prop(),
+    __metadata("design:type", Number)
+], Challenge.prototype, "dexterity", void 0);
+class Message {
+    success;
+    intelligence;
+    charisma;
+    strength;
+    dexterity;
+    perception;
+}
+__decorate([
+    prop(),
+    __metadata("design:type", String)
+], Message.prototype, "success", void 0);
+__decorate([
+    prop(),
+    __metadata("design:type", String)
+], Message.prototype, "intelligence", void 0);
+__decorate([
+    prop(),
+    __metadata("design:type", String)
+], Message.prototype, "charisma", void 0);
+__decorate([
+    prop(),
+    __metadata("design:type", String)
+], Message.prototype, "strength", void 0);
+__decorate([
+    prop(),
+    __metadata("design:type", String)
+], Message.prototype, "dexterity", void 0);
+__decorate([
+    prop(),
+    __metadata("design:type", String)
+], Message.prototype, "perception", void 0);
 class MissionClass {
     _id;
     title = "unknown";
@@ -22,13 +82,13 @@ class MissionClass {
         intelligence: 1,
         dexterity: 1,
     };
-    message = { message: "unknown message" };
+    message = { success: "unknown message" };
     cost = 1;
     xp = 1;
     constructor(data) {
         Object.assign(this, data); // fills all fields
     }
-    toObject() {
+    toPlainObject() {
         return { ...this };
     }
     rollD20() {
@@ -118,7 +178,7 @@ class MissionClass {
                 intelligence: 1,
                 dexterity: 1,
             },
-            message: obj.message ?? { message: "unknown message" },
+            message: obj.message ?? { success: "unknown message" },
             cost: obj.cost ?? 0,
             xp: obj.xp ?? 0,
         });
@@ -137,8 +197,8 @@ class MissionClass {
     }
 }
 __decorate([
-    prop(),
-    __metadata("design:type", String)
+    prop({ type: mongoose.Types.ObjectId }),
+    __metadata("design:type", Object)
 ], MissionClass.prototype, "_id", void 0);
 __decorate([
     prop({ required: true }),
@@ -157,11 +217,11 @@ __decorate([
     __metadata("design:type", String)
 ], MissionClass.prototype, "difficulty", void 0);
 __decorate([
-    prop({ required: true }),
+    prop({ type: () => Challenge, required: true, _id: false }),
     __metadata("design:type", Object)
 ], MissionClass.prototype, "challenge", void 0);
 __decorate([
-    prop({ required: true }),
+    prop({ type: () => Message, required: true, _id: false }),
     __metadata("design:type", Object)
 ], MissionClass.prototype, "message", void 0);
 __decorate([
@@ -172,6 +232,8 @@ __decorate([
     prop({ required: true }),
     __metadata("design:type", Number)
 ], MissionClass.prototype, "xp", void 0);
-export const MissionModel = getModelForClass(MissionClass);
+export const MissionModel = getModelForClass(MissionClass, {
+    schemaOptions: { collection: "missions" },
+});
 export default MissionClass;
 //# sourceMappingURL=MissionClass.js.map

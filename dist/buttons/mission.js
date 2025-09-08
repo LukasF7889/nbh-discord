@@ -30,10 +30,10 @@ const handleStartMission = async (interaction, args) => {
     try {
         const events = await EventService.getRandomEvents(mission.duration);
         const missionResult = await MissionService.startMission(player, mission, events, ItemRepository.getItem);
-        console.log(missionResult);
         if (!missionResult)
             throw new Error("Error receiving mission results");
         let eventReport = [];
+        console.log(missionResult);
         //Render event result texts
         if (missionResult.success && missionResult.eventFeedback) {
             for (let i = 0; i < missionResult.eventFeedback.length; i++) {

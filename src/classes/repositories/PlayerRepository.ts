@@ -8,7 +8,7 @@ class PlayerRepository {
   }
 
   async create(player: PlayerClass): Promise<PlayerClass> {
-    const playerDoc = await PlayerModel.create(player.toObject());
+    const playerDoc = await PlayerModel.create(player.toPlainObject());
     const playerClass = PlayerClass.fromDoc(playerDoc);
     if (!playerClass) throw new Error("Failed to create player");
     return playerClass;
@@ -17,7 +17,7 @@ class PlayerRepository {
   async save(player: PlayerClass): Promise<PlayerClass> {
     const updated = await PlayerModel.findOneAndUpdate(
       { discordId: player.discordId },
-      player.toObject(),
+      player.toPlainObject(),
       { new: true }
     );
     const playerClass = PlayerClass.fromDoc(updated);

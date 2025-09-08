@@ -10,7 +10,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { getModelForClass, prop } from "@typegoose/typegoose";
 class ItemClass {
     name = "undefined";
-    properties = {};
     type = "unknown";
     quantity = 1;
     constructor(data) {
@@ -23,16 +22,14 @@ __decorate([
 ], ItemClass.prototype, "name", void 0);
 __decorate([
     prop({ required: true }),
-    __metadata("design:type", Object)
-], ItemClass.prototype, "properties", void 0);
-__decorate([
-    prop({ required: true }),
     __metadata("design:type", String)
 ], ItemClass.prototype, "type", void 0);
 __decorate([
     prop({ required: true, default: 1 }),
     __metadata("design:type", Number)
 ], ItemClass.prototype, "quantity", void 0);
-export const ItemModel = getModelForClass(ItemClass);
+export const ItemModel = getModelForClass(ItemClass, {
+    schemaOptions: { collection: "items" },
+});
 export default ItemClass;
 //# sourceMappingURL=ItemClass.js.map

@@ -28,6 +28,8 @@ __decorate([
     prop({ required: true }),
     __metadata("design:type", Number)
 ], MissionEventClass.prototype, "difficulty", void 0);
-export const MissionEventModel = getModelForClass(MissionEventClass);
+export const MissionEventModel = getModelForClass(MissionEventClass, {
+    schemaOptions: { collection: "missionevents" },
+});
 export default MissionEventClass;
 //# sourceMappingURL=MissionEventClass.js.map

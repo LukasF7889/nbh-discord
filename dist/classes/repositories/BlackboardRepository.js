@@ -2,7 +2,7 @@ import MissionRepository from "./MissionRepository.js";
 import BlackboardClass, { BlackboardModel, } from "../entities/BlackboardClass.js";
 class BlackboardRepository {
     async save(blackboard) {
-        const bbDoc = await BlackboardModel.findOneAndUpdate({ key: "main" }, blackboard.toObject(), {
+        const bbDoc = await BlackboardModel.findOneAndUpdate({ key: "main" }, blackboard.toPlainObject(), {
             new: true,
             upsert: true,
         });
@@ -18,7 +18,7 @@ class BlackboardRepository {
             lastUpdated: new Date(),
             refreshTime,
         });
-        const bbDoc = await BlackboardModel.create(newBBInstance.toObject());
+        const bbDoc = await BlackboardModel.create(newBBInstance.toPlainObject());
         return BlackboardClass.fromDoc(bbDoc);
     }
     async get() {

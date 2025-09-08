@@ -4,9 +4,26 @@ import { getModelForClass, prop } from "@typegoose/typegoose";
 import mongoose from "mongoose";
 import MissionEventClass from "./MissionEventClass.js";
 
+class Challenge {
+  @prop() charisma!: number;
+  @prop() strength!: number;
+  @prop() perception!: number;
+  @prop() intelligence!: number;
+  @prop() dexterity!: number;
+}
+
+class Message {
+  @prop() success!: string;
+  @prop() intelligence?: string;
+  @prop() charisma?: string;
+  @prop() strength?: string;
+  @prop() dexterity?: string;
+  @prop() perception?: string;
+}
+
 class MissionClass {
-  @prop()
-  _id?: string;
+  @prop({ type: mongoose.Types.ObjectId })
+  _id?: mongoose.Types.ObjectId | string;
 
   @prop({ required: true })
   title: string = "unknown";
@@ -20,8 +37,14 @@ class MissionClass {
   @prop({ required: true })
   difficulty: string = "Easy";
 
-  @prop({ required: true })
-  challenge: Record<keyof PlayerClass["skills"], number> = {
+  @prop({ type: () => Challenge, required: true, _id: false })
+  challenge: {
+    charisma: number;
+    strength: number;
+    perception: number;
+    intelligence: number;
+    dexterity: number;
+  } = {
     charisma: 1,
     strength: 1,
     perception: 1,
@@ -29,8 +52,15 @@ class MissionClass {
     dexterity: 1,
   };
 
-  @prop({ required: true })
-  message: Record<string, string> = { message: "unknown message" };
+  @prop({ type: () => Message, required: true, _id: false })
+  message: {
+    success: string;
+    intelligence?: string;
+    charisma?: string;
+    strength?: string;
+    dexterity?: string;
+    perception?: string;
+  } = { success: "unknown message" };
 
   @prop({ required: true })
   cost: number = 1;
@@ -42,7 +72,7 @@ class MissionClass {
     Object.assign(this, data); // fills all fields
   }
 
-  toObject() {
+  toPlainObject() {
     return { ...this };
   }
 
@@ -157,7 +187,7 @@ class MissionClass {
         intelligence: 1,
         dexterity: 1,
       },
-      message: obj.message ?? { message: "unknown message" },
+      message: obj.message ?? { success: "unknown message" },
       cost: obj.cost ?? 0,
       xp: obj.xp ?? 0,
     });
@@ -178,5 +208,7 @@ class MissionClass {
   }
 }
 
-export const MissionModel = getModelForClass(MissionClass);
+export const MissionModel = getModelForClass(MissionClass, {
+  schemaOptions: { collection: "missions" },
+});
 export default MissionClass;

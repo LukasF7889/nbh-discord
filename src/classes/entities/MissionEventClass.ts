@@ -22,5 +22,7 @@ class MissionEventClass {
   }
 }
 
-export const MissionEventModel = getModelForClass(MissionEventClass);
+export const MissionEventModel = getModelForClass(MissionEventClass, {
+  schemaOptions: { collection: "missionevents" },
+});
 export default MissionEventClass;

@@ -6,6 +6,19 @@ import { getModelForClass, prop } from "@typegoose/typegoose";
 import ItemClass from "./ItemClass.js";
 import mongoose from "mongoose";
 
+class Energy {
+  @prop({ default: 0 }) current: number = 0;
+  @prop({ default: 100 }) max: number = 100;
+}
+
+class Skills {
+  @prop({ default: 0 }) charisma: number = 0;
+  @prop({ default: 0 }) strength: number = 0;
+  @prop({ default: 0 }) intelligence: number = 0;
+  @prop({ default: 0 }) dexterity: number = 0;
+  @prop({ default: 0 }) perception: number = 0;
+}
+
 class PlayerClass {
   @prop({ required: true, unique: true })
   discordId: string = "";
@@ -22,37 +35,24 @@ class PlayerClass {
   @prop({ default: 0 })
   money: number = 0;
 
-  @prop({ default: { current: 0, max: 100 } })
-  energy = { current: 0, max: 100 };
+  @prop({ type: () => Energy, required: true, _id: false })
+  energy = new Energy();
 
   @prop({ required: true })
   mythos: string = "Unknown";
 
-  @prop({ required: true })
+  @prop({ required: true, allowMixed: 0 })
+  //setting allowMixed to 0 here to keep code DRY and ignore the typegoose warning
   type: keyof typeof mythTypes = "Geist";
 
-  @prop({
-    default: {
-      charisma: 0,
-      strength: 0,
-      intelligence: 0,
-      dexterity: 0,
-      perception: 0,
-    },
-  })
+  @prop({ type: () => Skills, required: true, _id: false })
   skills: {
     charisma: number;
     strength: number;
     intelligence: number;
     dexterity: number;
     perception: number;
-  } = {
-    charisma: 0,
-    strength: 0,
-    intelligence: 0,
-    dexterity: 0,
-    perception: 0,
-  };
+  } = new Skills();
 
   @prop({ type: () => [ItemClass], default: [] })
   items!: ItemClass[];
@@ -61,7 +61,7 @@ class PlayerClass {
     Object.assign(this, data); // fills all fields
   }
 
-  toObject() {
+  toPlainObject() {
     return {
       ...this,
     };
@@ -119,7 +119,6 @@ class PlayerClass {
         name: item.name,
         type: item.type || "unknown",
         quantity: quantity,
-        properties: item.properties || {},
       });
       console.log("Added new item: ", this.items);
     }
@@ -211,5 +210,7 @@ class PlayerClass {
   }
 }
 
-export const PlayerModel = getModelForClass(PlayerClass);
+export const PlayerModel = getModelForClass(PlayerClass, {
+  schemaOptions: { collection: "players" },
+});
 export default PlayerClass;

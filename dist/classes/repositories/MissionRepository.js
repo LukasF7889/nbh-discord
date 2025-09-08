@@ -16,7 +16,7 @@ class MissionRepository {
         if (!missions)
             return null;
         const missionObj = missions
-            .map((m) => MissionClass.fromDoc(m))
+            .map((m) => MissionClass.fromObj(m))
             .filter((m) => m !== null);
         return missionObj;
     }
