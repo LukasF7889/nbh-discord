@@ -1,6 +1,5 @@
 import { ActionRowBuilder } from "discord.js";
 import MissionClass from "../entities/MissionClass.js";
-import { blackboardType } from "../../types/blackboardType.js";
 import BlackboardClass from "../entities/BlackboardClass.js";
 
 class MissionPresenter {

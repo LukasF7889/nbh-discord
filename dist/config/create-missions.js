@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import Mission from "../models/mission.js";
 import dotenv from "dotenv";
+import { MissionModel } from "../classes/entities/MissionClass.js";
 dotenv.config();
 async function createMissions() {
     try {
@@ -8,9 +8,9 @@ async function createMissions() {
             throw new Error("Datenbank connection missing");
         const MONGO_URI = process.env.MONGO_URI;
         await mongoose.connect(MONGO_URI);
-        await Mission.deleteMany({});
+        await MissionModel.deleteMany({});
         console.log("✅ Alle Missionen gelöscht");
-        const missions = await Mission.create({
+        const missions = await MissionModel.create({
             title: "Lagerüberfall",
             duration: "10",
             description: "Ein kleiner Lagerüberfall zur Übung.",

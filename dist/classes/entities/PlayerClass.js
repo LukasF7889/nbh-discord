@@ -37,6 +37,33 @@ class PlayerClass {
             ...this,
         };
     }
+    static hasToObject(doc) {
+        return typeof doc?.toObject === "function";
+    }
+    // for Mongoose Documents
+    static fromDoc(doc) {
+        if (!doc)
+            return null;
+        const obj = typeof doc.toObject === "function" ? doc.toObject() : doc;
+        return new PlayerClass({
+            discordId: obj.discordId,
+            username: obj.username ?? "Unknown",
+            level: obj.level ?? 1,
+            xp: obj.xp ?? 0,
+            money: obj.money ?? 0,
+            energy: obj.energy ?? { current: 0, max: 100 },
+            mythos: obj.mythos ?? "Unknown",
+            type: obj.type ?? "Geist",
+            skills: obj.skills ?? {
+                intelligence: 0,
+                charisma: 0,
+                strength: 0,
+                dexterity: 0,
+                perception: 0,
+            },
+            items: obj.items?.map((i) => new ItemClass(i)) ?? [],
+        });
+    }
     addItemToInventory(item) {
         //Validate item
         if (!item || !item.name)
@@ -114,7 +141,7 @@ class PlayerClass {
     restoreEnergy() {
         this.energy.current = this.energy.max;
     }
-    substractEnergy(amount) {
+    subtractEnergy(amount) {
         if (amount < 0)
             throw new Error("Energie darf nicht negativ sein");
         if (this.energy.current - amount < 0) {

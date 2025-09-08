@@ -1,10 +1,10 @@
 import BlackboardRepository from "../repositories/BlackboardRepository.js";
 import MissionRepository from "../repositories/MissionRepository.js";
-import { toBlackboardClass } from "../../models/blackboard.js";
+import BlackboardClass from "../entities/BlackboardClass.js";
 class BlackboardService {
     static async getBlackboard() {
         const blackboardDoc = await BlackboardRepository.get();
-        const blackboard = toBlackboardClass(blackboardDoc);
+        const blackboard = BlackboardClass.fromDoc(blackboardDoc);
         if (!blackboard)
             throw new Error("Error receiving blackboard data");
         if (blackboard.needsUpdate()) {

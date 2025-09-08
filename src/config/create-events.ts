@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import MissionEvent from "../models/missionEvents.js";
 import dotenv from "dotenv";
+import { MissionModel } from "../classes/entities/MissionClass.js";
 
 dotenv.config();
 
@@ -10,7 +10,7 @@ const createEvents = async () => {
     const MONGO_URI = process.env.MONGO_URI;
     await mongoose.connect(MONGO_URI);
 
-    const events = await MissionEvent.create([
+    const events = await MissionModel.create([
       // --- Charisma (10) ---
       {
         description: "Überzeuge einen Wachmann",

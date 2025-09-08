@@ -1,13 +1,15 @@
-import MissionEvents from "../../models/missionEvents.js";
+import MissionEventClass, {
+  MissionEventModel,
+} from "../entities/MissionEventClass.js";
 
 class EventService {
   static async getRandomEvents(missionDuration: number) {
     const numberOfEvents = Math.ceil(missionDuration / 5);
-    return MissionEvents.aggregate([{ $sample: { size: numberOfEvents } }]);
+    return MissionEventModel.aggregate([{ $sample: { size: numberOfEvents } }]);
   }
 
   static async getEventByType(type: string) {
-    return MissionEvents.findOne({ type });
+    return MissionEventModel.findOne({ type });
   }
 }
 

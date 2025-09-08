@@ -4,12 +4,12 @@ import {
   ButtonInteraction,
   MessageFlags,
 } from "discord.js";
-import getItem from "../utils/getItem.js";
 import MissionService from "../classes/services/MissionService.js";
 import PlayerRepository from "../classes/repositories/PlayerRepository.js";
 import MissionRepository from "../classes/repositories/MissionRepository.js";
 import EventService from "../classes/services/EventService.js";
-import { MissionEventType } from "../types/missionEventType.js";
+import MissionEventClass from "../classes/entities/MissionEventClass.js";
+import ItemRepository from "../classes/repositories/ItemRepository.js";
 
 const handleStartMission = async (
   interaction: ButtonInteraction,
@@ -39,14 +39,14 @@ const handleStartMission = async (
     });
 
   try {
-    const events: MissionEventType[] = await EventService.getRandomEvents(
+    const events: MissionEventClass[] = await EventService.getRandomEvents(
       mission.duration
     );
     const missionResult = await MissionService.startMission(
       player,
       mission,
       events,
-      getItem
+      ItemRepository.getItem
     );
     console.log(missionResult);
     if (!missionResult) throw new Error("Error receiving mission results");

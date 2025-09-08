@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import Item from "../models/item.js";
 import dotenv from "dotenv";
+import { ItemModel } from "../classes/entities/ItemClass.js";
 dotenv.config();
 const createItems = async () => {
     try {
@@ -8,9 +8,9 @@ const createItems = async () => {
             throw new Error("Datenbank connection missing");
         const MONGO_URI = process.env.MONGO_URI;
         await mongoose.connect(MONGO_URI);
-        await Item.deleteMany({});
+        await ItemModel.deleteMany({});
         console.log("Items entfernt");
-        const objects = await Item.create({
+        const objects = await ItemModel.create({
             name: "Intelligence Ticket",
             properties: {},
             type: "intelligence",

@@ -1,6 +1,6 @@
-import Item from "../models/item.js";
+import { ItemModel } from "../classes/entities/ItemClass.js";
 const getItem = async (att) => {
-    const item = await Item.aggregate([
+    const item = await ItemModel.aggregate([
         { $match: { type: att } },
         { $sample: { size: 1 } },
     ]);

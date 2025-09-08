@@ -1,22 +1,21 @@
-import Player from "../../models/player.js";
-import { toPlayerClass } from "../../models/player.js";
+import PlayerClass, { PlayerModel } from "../entities/PlayerClass.js";
 class PlayerRepository {
     async findByDiscordId(discordId) {
-        const playerDoc = await Player.findOne({ discordId });
+        const playerDoc = await PlayerModel.findOne({ discordId });
         if (!playerDoc)
             return null;
-        return toPlayerClass(playerDoc);
+        return PlayerClass.fromDoc(playerDoc);
     }
     async create(player) {
-        const playerDoc = await Player.create(player.toObject());
-        const playerClass = toPlayerClass(playerDoc);
+        const playerDoc = await PlayerModel.create(player.toObject());
+        const playerClass = PlayerClass.fromDoc(playerDoc);
         if (!playerClass)
             throw new Error("Failed to create player");
         return playerClass;
     }
     async save(player) {
-        const updated = await Player.findOneAndUpdate({ discordId: player.discordId }, player.toObject(), { new: true });
-        const playerClass = toPlayerClass(updated);
+        const updated = await PlayerModel.findOneAndUpdate({ discordId: player.discordId }, player.toObject(), { new: true });
+        const playerClass = PlayerClass.fromDoc(updated);
         if (!playerClass)
             throw new Error("Failed to save player");
         return playerClass;

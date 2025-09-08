@@ -1,8 +1,8 @@
 import PlayerRepository from "../classes/repositories/PlayerRepository.js";
 import { ButtonInteraction, MessageFlags } from "discord.js";
 import { ticketMap } from "../config/gameMaps.js";
-import { itemType } from "../types/itemType.js";
 import PlayerClass from "../classes/entities/PlayerClass.js";
+import ItemClass from "../classes/entities/ItemClass.js";
 
 const handleDojo = async (interaction: ButtonInteraction, args: string[]) => {
   const [attStr]: string[] = args;
@@ -29,7 +29,7 @@ const handleDojo = async (interaction: ButtonInteraction, args: string[]) => {
       }
     } else {
       const ticket = player.items.find(
-        (i: itemType) => i.name === ticketMap[att]
+        (i: ItemClass) => i.name === ticketMap[att]
       );
       if (!ticket) throw new Error(`Kein ${ticketMap[att]} vorhanden`);
       const upgradeCheck = player.checkAttributeUpgrade(att);

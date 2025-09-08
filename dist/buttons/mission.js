@@ -1,9 +1,9 @@
 import { EmbedBuilder, MessageFlags, } from "discord.js";
-import getItem from "../utils/getItem.js";
 import MissionService from "../classes/services/MissionService.js";
 import PlayerRepository from "../classes/repositories/PlayerRepository.js";
 import MissionRepository from "../classes/repositories/MissionRepository.js";
 import EventService from "../classes/services/EventService.js";
+import ItemRepository from "../classes/repositories/ItemRepository.js";
 const handleStartMission = async (interaction, args) => {
     const [missionId] = args;
     let mission;
@@ -29,7 +29,7 @@ const handleStartMission = async (interaction, args) => {
         });
     try {
         const events = await EventService.getRandomEvents(mission.duration);
-        const missionResult = await MissionService.startMission(player, mission, events, getItem);
+        const missionResult = await MissionService.startMission(player, mission, events, ItemRepository.getItem);
         console.log(missionResult);
         if (!missionResult)
             throw new Error("Error receiving mission results");

@@ -15,7 +15,7 @@ class MissionService {
                 player,
             };
         }
-        player.substractEnergy(mission.cost);
+        player.subtractEnergy(mission.cost);
         const missionFeedback = mission.checkSuccess(player);
         if (!missionFeedback)
             throw new Error("Error determing mission success");

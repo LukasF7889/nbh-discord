@@ -1,17 +1,16 @@
-import Blackboard, { toBlackboardClass } from "../../models/blackboard.js";
 import MissionRepository from "./MissionRepository.js";
-import BlackboardClass from "../entities/BlackboardClass.js";
+import BlackboardClass, { BlackboardModel, } from "../entities/BlackboardClass.js";
 class BlackboardRepository {
     async save(blackboard) {
-        const bbDoc = await Blackboard.findOneAndUpdate({ key: "main" }, blackboard.toObject(), {
+        const bbDoc = await BlackboardModel.findOneAndUpdate({ key: "main" }, blackboard.toObject(), {
             new: true,
             upsert: true,
         });
-        return toBlackboardClass(bbDoc);
+        return BlackboardClass.fromDoc(bbDoc);
     }
     async create(refreshTime = 300000) {
         const missions = await MissionRepository.getRandom(3);
-        if (!missions)
+        if (!missions || missions.length === 0)
             throw new Error("Error getting missions");
         const newBBInstance = new BlackboardClass({
             key: "main",
@@ -19,15 +18,15 @@ class BlackboardRepository {
             lastUpdated: new Date(),
             refreshTime,
         });
-        const bbDoc = await Blackboard.create(newBBInstance.toObject());
-        return toBlackboardClass(bbDoc);
+        const bbDoc = await BlackboardModel.create(newBBInstance.toObject());
+        return BlackboardClass.fromDoc(bbDoc);
     }
     async get() {
-        const bbDoc = await Blackboard.findOne({ key: "main" });
+        const bbDoc = await BlackboardModel.findOne({ key: "main" });
         if (!bbDoc) {
             return await this.create();
         }
-        return toBlackboardClass(bbDoc);
+        return BlackboardClass.fromDoc(bbDoc);
     }
 }
 export default new BlackboardRepository();

@@ -2,7 +2,7 @@ import MissionClass from "../entities/MissionClass.js";
 import PlayerClass from "../entities/PlayerClass.js";
 import MissionRepository from "../repositories/MissionRepository.js";
 import PlayerRepository from "../repositories/PlayerRepository.js";
-import type { MissionEventType } from "../../types/missionEventType.js";
+import MissionEventClass from "../entities/MissionEventClass.js";
 
 class MissionService {
   static async loadMission(missionId: string) {
@@ -16,7 +16,7 @@ class MissionService {
   static async startMission(
     player: PlayerClass,
     mission: MissionClass,
-    events: MissionEventType[],
+    events: MissionEventClass[],
     getItemFn: (att: string) => Promise<any>
   ) {
     if (mission.cost > player.energy.current) {
@@ -27,7 +27,7 @@ class MissionService {
       };
     }
 
-    player.substractEnergy(mission.cost);
+    player.subtractEnergy(mission.cost);
 
     const missionFeedback = mission.checkSuccess(player);
     if (!missionFeedback) throw new Error("Error determing mission success");

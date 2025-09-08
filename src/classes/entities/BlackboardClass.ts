@@ -1,5 +1,6 @@
 import MissionClass from "./MissionClass.js";
 import { getModelForClass, prop } from "@typegoose/typegoose";
+import { Document } from "mongodb";
 
 interface BlackboardConstructorData {
   currentMissions: MissionClass[];
@@ -51,17 +52,36 @@ class BlackboardClass {
     return Math.max(0, remaining / 1000 / 60);
   }
 
-  static toBlackboardClass(doc: (Document & { toObject?: () => any }) | null) {
+  static fromDoc(
+    doc: PlayerDocument | mongoose.Document | null
+  ): PlayerClass | null {
     if (!doc) return null;
-    const obj = typeof doc.toObject === "function" ? doc.toObject() : doc;
 
-    //check if lastUpdated ist a date object
-    obj.lastUpdated = obj.lastUpdated ? new Date(obj.lastUpdated) : null;
+    const obj: PlayerDocument = hasToObject(doc)
+      ? doc.toObject()
+      : (doc as PlayerDocument);
 
-    // map currentMissions into MissionClass objects
-    obj.currentMissions = obj.currentMissions.map(
-      (m: MissionClass) => new MissionClass(m)
-    );
+    const data: PlayerType = {
+      // _id: obj._id ?? "unknown_id",
+      discordId: obj.discordId,
+      username: obj.username ?? "Unknown",
+      level: obj.level ?? 1,
+      xp: obj.xp ?? 0,
+      money: obj.money ?? 0,
+      energy: obj.energy ?? { current: 0, max: 100 },
+      mythos: obj.mythos ?? "Unknown",
+      type: obj.type ?? "Geist",
+      skills: obj.skills ?? {
+        intelligence: 0,
+        charisma: 0,
+        strength: 0,
+        dexterity: 0,
+        perception: 0,
+      },
+      items: obj.items ?? [],
+    };
+
+    return new PlayerClass(data);
   }
 }
 

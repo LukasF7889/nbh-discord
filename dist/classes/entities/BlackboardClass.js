@@ -40,14 +40,32 @@ class BlackboardClass {
         const remaining = this.refreshTime - elapsed;
         return Math.max(0, remaining / 1000 / 60);
     }
-    static toBlackboardClass(doc) {
+    static fromDoc(doc) {
         if (!doc)
             return null;
-        const obj = typeof doc.toObject === "function" ? doc.toObject() : doc;
-        //check if lastUpdated ist a date object
-        obj.lastUpdated = obj.lastUpdated ? new Date(obj.lastUpdated) : null;
-        // map currentMissions into MissionClass objects
-        obj.currentMissions = obj.currentMissions.map((m) => new MissionClass(m));
+        const obj = hasToObject(doc)
+            ? doc.toObject()
+            : doc;
+        const data = {
+            // _id: obj._id ?? "unknown_id",
+            discordId: obj.discordId,
+            username: obj.username ?? "Unknown",
+            level: obj.level ?? 1,
+            xp: obj.xp ?? 0,
+            money: obj.money ?? 0,
+            energy: obj.energy ?? { current: 0, max: 100 },
+            mythos: obj.mythos ?? "Unknown",
+            type: obj.type ?? "Geist",
+            skills: obj.skills ?? {
+                intelligence: 0,
+                charisma: 0,
+                strength: 0,
+                dexterity: 0,
+                perception: 0,
+            },
+            items: obj.items ?? [],
+        };
+        return new PlayerClass(data);
     }
 }
 __decorate([

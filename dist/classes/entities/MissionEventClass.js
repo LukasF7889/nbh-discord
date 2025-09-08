@@ -8,31 +8,26 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { getModelForClass, prop } from "@typegoose/typegoose";
-class ItemClass {
-    name = "undefined";
-    properties = {};
+class MissionEventClass {
+    description = "undefined";
     type = "unknown";
-    quantity = 1;
+    difficulty = 0;
     constructor(data) {
-        Object.assign(this, data); // fills all fields
+        Object.assign(this, data);
     }
 }
 __decorate([
-    prop({ required: true, unique: true }),
-    __metadata("design:type", String)
-], ItemClass.prototype, "name", void 0);
-__decorate([
     prop({ required: true }),
-    __metadata("design:type", Object)
-], ItemClass.prototype, "properties", void 0);
+    __metadata("design:type", String)
+], MissionEventClass.prototype, "description", void 0);
 __decorate([
     prop({ required: true }),
     __metadata("design:type", String)
-], ItemClass.prototype, "type", void 0);
+], MissionEventClass.prototype, "type", void 0);
 __decorate([
-    prop({ required: true, default: 1 }),
+    prop({ required: true }),
     __metadata("design:type", Number)
-], ItemClass.prototype, "quantity", void 0);
-export const ItemModel = getModelForClass(ItemClass);
-export default ItemClass;
-//# sourceMappingURL=ItemClass.js.map
+], MissionEventClass.prototype, "difficulty", void 0);
+export const MissionEventModel = getModelForClass(MissionEventClass);
+export default MissionEventClass;
+//# sourceMappingURL=MissionEventClass.js.map

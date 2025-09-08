@@ -1,24 +1,32 @@
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 import { ButtonBuilder, ButtonStyle } from "discord.js";
+import { getModelForClass, prop } from "@typegoose/typegoose";
 class MissionClass {
     _id;
-    title;
-    duration;
-    description;
-    difficulty;
-    challenge;
-    message;
-    cost;
-    xp;
-    constructor({ _id, title, duration, description, difficulty, challenge, message, cost, xp, }) {
-        this._id = _id;
-        this.title = title;
-        this.duration = duration;
-        this.description = description;
-        this.difficulty = difficulty;
-        this.challenge = challenge;
-        this.message = message;
-        this.cost = cost;
-        this.xp = xp;
+    title = "unknown";
+    duration = 0;
+    description = "unknown";
+    difficulty = "Easy";
+    challenge = {
+        charisma: 1,
+        strength: 1,
+        perception: 1,
+        intelligence: 1,
+        dexterity: 1,
+    };
+    message = { message: "unknown message" };
+    cost = 1;
+    xp = 1;
+    constructor(data) {
+        Object.assign(this, data); // fills all fields
     }
     toObject() {
         return { ...this };
@@ -31,6 +39,8 @@ class MissionClass {
         for (const event of events) {
             const dice = this.rollD20();
             let item = null;
+            if (event.type === "unknown")
+                throw new Error("Unknown event was triggered");
             const isSuccess = dice + player.skills?.[event.type] >= event.difficulty;
             if (isSuccess) {
                 //Get an item
@@ -85,6 +95,83 @@ class MissionClass {
             .setLabel(this.title)
             .setStyle(ButtonStyle.Primary);
     }
+    //type guard to check if it is has the "toObject()"
+    hasToObject(doc) {
+        return typeof doc?.toObject === "function";
+    }
+    // shared helper: takes a plain object and returns MissionClass
+    static buildMissionClass(obj) {
+        let id;
+        if (obj._id != null)
+            id = obj._id.toString();
+        console.log("Converting id: ", id, obj._id);
+        return new MissionClass({
+            _id: id,
+            title: obj.title ?? "Untitled",
+            duration: obj.duration ?? 0,
+            description: obj.description ?? "",
+            difficulty: obj.difficulty ?? "Leicht",
+            challenge: obj.challenge ?? {
+                charisma: 1,
+                strength: 1,
+                perception: 1,
+                intelligence: 1,
+                dexterity: 1,
+            },
+            message: obj.message ?? { message: "unknown message" },
+            cost: obj.cost ?? 0,
+            xp: obj.xp ?? 0,
+        });
+    }
+    // for Mongoose Documents
+    static fromDoc(doc) {
+        if (!doc)
+            return null;
+        return this.buildMissionClass(doc.toObject());
+    }
+    // for plain objects
+    static fromObj(obj) {
+        if (!obj)
+            return null;
+        return this.buildMissionClass(obj);
+    }
 }
+__decorate([
+    prop(),
+    __metadata("design:type", String)
+], MissionClass.prototype, "_id", void 0);
+__decorate([
+    prop({ required: true }),
+    __metadata("design:type", String)
+], MissionClass.prototype, "title", void 0);
+__decorate([
+    prop({ required: true }),
+    __metadata("design:type", Number)
+], MissionClass.prototype, "duration", void 0);
+__decorate([
+    prop({ required: true }),
+    __metadata("design:type", String)
+], MissionClass.prototype, "description", void 0);
+__decorate([
+    prop({ required: true }),
+    __metadata("design:type", String)
+], MissionClass.prototype, "difficulty", void 0);
+__decorate([
+    prop({ required: true }),
+    __metadata("design:type", Object)
+], MissionClass.prototype, "challenge", void 0);
+__decorate([
+    prop({ required: true }),
+    __metadata("design:type", Object)
+], MissionClass.prototype, "message", void 0);
+__decorate([
+    prop({ required: true }),
+    __metadata("design:type", Number)
+], MissionClass.prototype, "cost", void 0);
+__decorate([
+    prop({ required: true }),
+    __metadata("design:type", Number)
+], MissionClass.prototype, "xp", void 0);
+export const MissionModel = getModelForClass(MissionClass);
 export default MissionClass;
 //# sourceMappingURL=MissionClass.js.map

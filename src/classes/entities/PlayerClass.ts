@@ -4,6 +4,7 @@ import { calcLevelUp, energyForLevel } from "../../config/calcLevelup.js";
 import { mythTypes } from "../../config/mythTypes.js";
 import { getModelForClass, prop } from "@typegoose/typegoose";
 import ItemClass from "./ItemClass.js";
+import mongoose from "mongoose";
 
 class PlayerClass {
   @prop({ required: true, unique: true })
@@ -40,11 +41,11 @@ class PlayerClass {
     },
   })
   skills: {
-    charisma: 0;
-    strength: 0;
-    intelligence: 0;
-    dexterity: 0;
-    perception: 0;
+    charisma: number;
+    strength: number;
+    intelligence: number;
+    dexterity: number;
+    perception: number;
   } = {
     charisma: 0,
     strength: 0,
@@ -64,6 +65,37 @@ class PlayerClass {
     return {
       ...this,
     };
+  }
+
+  static hasToObject(
+    doc: any
+  ): doc is mongoose.Document & { toObject: () => PlayerClass } {
+    return typeof doc?.toObject === "function";
+  }
+
+  // for Mongoose Documents
+  static fromDoc(doc: mongoose.Document | null): PlayerClass | null {
+    if (!doc) return null;
+    const obj = typeof doc.toObject === "function" ? doc.toObject() : doc;
+
+    return new PlayerClass({
+      discordId: obj.discordId,
+      username: obj.username ?? "Unknown",
+      level: obj.level ?? 1,
+      xp: obj.xp ?? 0,
+      money: obj.money ?? 0,
+      energy: obj.energy ?? { current: 0, max: 100 },
+      mythos: obj.mythos ?? "Unknown",
+      type: obj.type ?? "Geist",
+      skills: obj.skills ?? {
+        intelligence: 0,
+        charisma: 0,
+        strength: 0,
+        dexterity: 0,
+        perception: 0,
+      },
+      items: obj.items?.map((i: any) => new ItemClass(i)) ?? [],
+    });
   }
 
   addItemToInventory(item: ItemClass) {
@@ -147,7 +179,7 @@ class PlayerClass {
     this.energy.current = this.energy.max;
   }
 
-  substractEnergy(amount: number) {
+  subtractEnergy(amount: number) {
     if (amount < 0) throw new Error("Energie darf nicht negativ sein");
     if (this.energy.current - amount < 0) {
       return { error: "Nicht genug Energie vorhanden" };
